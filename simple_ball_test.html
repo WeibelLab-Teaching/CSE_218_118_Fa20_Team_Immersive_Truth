@@ -38,61 +38,109 @@
         var sceneToRender = null;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
         /******* Add the create scene function ******/
-       var createScene = async function () {
-    // This creates a basic Babylon Scene object (non-mesh)
-    var scene = new BABYLON.Scene(engine);
+        var createScene = async function () {
+            // This creates a basic Babylon Scene object (non-mesh)
+            var scene = new BABYLON.Scene(engine);
 
-    // This creates and positions a free camera (non-mesh)
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+            // This creates and positions a free camera (non-mesh)
+            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
 
-    // This targets the camera to scene origin
-    camera.setTarget(BABYLON.Vector3.Zero());
+            // This targets the camera to scene origin
+            camera.setTarget(BABYLON.Vector3.Zero());
 
-    // This attaches the camera to the canvas
-    camera.attachControl(canvas, true);
+            // This attaches the camera to the canvas
+            camera.attachControl(canvas, true);
 
-    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+            var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
-    // Default intensity is 1. Let's dim the light a small amount
-    light.intensity = 0.7;
+            // Default intensity is 1. Let's dim the light a small amount
+            light.intensity = 0.7;
 
-    // Our built-in 'sphere' shape.
-    var sphere1 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
-    var sphere2 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
-    var sphere3 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
-    var sphere4 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
-    var sphere5 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
+            // Our built-in 'sphere' shape.
+            // var sphere1 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+            // var sphere2 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+            // var sphere3 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+            // var sphere4 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+            // var sphere5 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
 
-    // Move the sphere upward 1/2 its height
-    sphere1.position.y = 1;
-    sphere2.position.y = 1;
-    sphere3.position.y = 1;
-    sphere4.position.y = 1;
-    sphere5.position.y = 1;
+            // // Move the sphere upward 1/2 its height
+            // sphere1.position.y = 4;
+            // sphere2.position.y = 4;
+            // sphere3.position.y = 4;
+            // sphere4.position.y = 4;
+            // sphere5.position.y = 4;
 
-    sphere1.position.x = 0;
-    sphere2.position.x = 3;
-    sphere3.position.x = -3;
-    sphere4.position.x = 3;
-    sphere5.position.x = -3;
+            // sphere1.position.x = 0;
+            // sphere2.position.x = 5;
+            // sphere3.position.x = -5;
+            // sphere4.position.x = 5;
+            // sphere5.position.x = -5;
 
-    sphere1.position.z = 0
-    sphere2.position.z = 0
-    sphere3.position.z = 0
-    sphere4.position.z = -6
-    sphere5.position.z = -6
+            // sphere1.position.z = 3
+            // sphere2.position.z = 3
+            // sphere3.position.z = 3
+            // sphere4.position.z = -6
+            // sphere5.position.z = -6
 
-    // Our built-in 'ground' shape.
-    var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+            // Our built-in 'ground' shape.
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
 
-    scene.createDefaultEnvironment();
+            scene.createDefaultEnvironment();
+            // The first parameter can be used to specify which mesh to import. Here we import all meshes
+            BABYLON.SceneLoader.ImportMesh("", "./scenes/", "skull.babylon", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 0;
+                newMeshes[0].position.y = 4;
+                newMeshes[0].position.z = 3;
+                newMeshes[0].scaling = new BABYLON.Vector3(.03,.03,.03);
 
-    // This is the magic line that allows XR, without it the split screen doesn't work
-    const xrHelper = await scene.createDefaultXRExperienceAsync();
+            });
+            BABYLON.SceneLoader.ImportMesh("", "scenes/", "skull.babylon", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 5;
+                newMeshes[0].position.y = 4;
+                newMeshes[0].position.z = 3;
+                newMeshes[0].scaling = new BABYLON.Vector3(.03,.03,.03);
+            
+            });
+            BABYLON.SceneLoader.ImportMesh("", "scenes/", "skull.babylon", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = -5;
+                newMeshes[0].position.y = 4;
+                newMeshes[0].position.z = 3;
+                newMeshes[0].scaling = new BABYLON.Vector3(.03,.03,.03);
+            
+            });
+            BABYLON.SceneLoader.ImportMesh("", "scenes/", "skull.babylon", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 5;
+                newMeshes[0].position.y = 4;
+                newMeshes[0].position.z = -6;
+                newMeshes[0].scaling = new BABYLON.Vector3(.03,.03,.03);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), 3.141592)
+            
+            });
+            BABYLON.SceneLoader.ImportMesh("", "scenes/", "skull.babylon", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = -5;
+                newMeshes[0].position.y = 4;
+                newMeshes[0].position.z = -6;
+                newMeshes[0].scaling = new BABYLON.Vector3(.03,.03,.03);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), 3.141592)
+            
+            });
+            
 
-    return scene;
-};
+            // Move the light with the camera
+            scene.registerBeforeRender(function () {
+                light.position = camera.position;
+            });
+            // This is the magic line that allows XR, without it the split screen doesn't work
+            const xrHelper = await scene.createDefaultXRExperienceAsync();
+
+            return scene;
+        };
         /******* End of the create scene function ******/
 
         var engine;
