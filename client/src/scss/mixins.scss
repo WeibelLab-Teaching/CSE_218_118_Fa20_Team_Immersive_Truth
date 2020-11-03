@@ -1,0 +1,17 @@
+@import './variables.scss';
+
+@mixin full-screen() {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: -webkit-fill-available;
+  height: -webkit-fill-available;
+  width: 100vw;
+  overflow: auto;
+  padding: 20px;
+}
+
+@mixin theme() {
+  background: $black;
+  color: $grey;
+}

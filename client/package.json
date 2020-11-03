@@ -1,0 +1,21 @@
+{
+  "name": "client",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "socket.io-client": "^2.3.1",
+    "uuid": "^8.3.1",
+    "vue": "^3.0.2",
+    "vue-router": "^4.0.0-rc.1"
+  },
+  "devDependencies": {
+    "@types/socket.io-client": "^1.4.34",
+    "@types/uuid": "^8.3.0",
+    "@vue/compiler-sfc": "^3.0.2",
+    "sass": "^1.27.0",
+    "vite": "^1.0.0-rc.8"
+  }
+}
