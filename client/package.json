@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "socket.io-client": "^2.3.1",
