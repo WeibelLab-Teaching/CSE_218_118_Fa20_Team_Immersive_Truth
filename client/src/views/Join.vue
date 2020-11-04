@@ -1,76 +1,65 @@
 <template>
-  <div class="join">
-    <h1 class="logo" @click="router.push('/')">Mafia VR</h1>
-    <p class="info">
-      You are about to join a Mafia VR game room with the following room ID:
-    </p>
-    <p class="info">{{ roomID }}</p>
-    <input
-      type="text"
-      class="name"
-      placeholder="Please enter a name"
-      v-model="name"
-    />
-    <button @click="join" :disabled="name.length === 0" class="button">
-      Join
-    </button>
+  <div class="join-component">
+    <Logo />
+    <div class="title">ROOM CODE?</div>
+    <input ref="code" placeholder="ENTER CODE..." type="text" class="code" />
+    <button class="next" @click="next">NEXT</button>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import socket from 'socket.io-client';
 
-import { SOCKET_IO_SERVER } from '../config';
+import Logo from '../components/Logo.vue';
+import { useStore } from '../store';
 
 export default defineComponent({
+  components: {
+    Logo,
+  },
   setup() {
+    const code = ref<HTMLInputElement>(null);
+    const store = useStore();
     const router = useRouter();
-    const href = window.location.href.split('/');
-    const roomID = ref(href[href.length - 1]);
-    const name = ref('');
 
-    // connect to socket IO
-    const io = socket(SOCKET_IO_SERVER);
-
-    // function to join the specified room with username
-    function join() {
-      router.push(`/room/${roomID.value}/name/${name.value}`);
+    function next() {
+      store.commit('setRoomId', code.value.value);
+      router.push('/name');
     }
 
-    return { router, roomID, name, join };
+    return {
+      code,
+      next,
+    };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.join {
+@import '../scss/mixins.scss';
+@import '../scss/variables.scss';
+
+.join-component {
+  @include full-screen();
+  @include theme();
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
-.logo {
-  cursor: pointer;
-  font-size: 3rem;
-  margin-top: 20px;
-  margin-bottom: 10px;
+.title {
+  font-size: $title-font-size;
 }
 
-.info {
-  margin: 10px;
+.code {
+  @include input();
 }
 
-.name {
-  margin: 10px;
-  padding: 5px 10px;
-  font-size: 1.5rem;
-}
-
-.button {
-  cursor: pointer;
-  padding: 5px 10px;
-  font-size: 1.15rem;
+.next {
+  @include button();
+  position: absolute;
+  bottom: 100px;
 }
 </style>

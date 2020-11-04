@@ -1,11 +1,6 @@
 <template>
   <div class="rules">
-    <img
-      @click="router.push('/')"
-      class="logo"
-      src="../assets/Shady.svg"
-      alt="logo"
-    />
+    <Logo />
     <div class="sections">
       <button
         @click="section = 'Gameplay'"
@@ -34,6 +29,7 @@ import { useRouter } from 'vue-router';
 
 import Gameplay from '../components/Gameplay.vue';
 import Roles from '../components/Roles.vue';
+import Logo from '../components/Logo.vue';
 
 export default defineComponent({
   setup() {
@@ -46,6 +42,7 @@ export default defineComponent({
     };
   },
   components: {
+    Logo,
     Gameplay,
     Roles,
   },
@@ -59,13 +56,6 @@ export default defineComponent({
 .rules {
   @include full-screen();
   @include theme();
-}
-
-.logo {
-  width: 10%;
-  position: absolute;
-  left: 20px;
-  cursor: pointer;
 }
 
 .sections {
