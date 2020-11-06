@@ -71,10 +71,15 @@
 
             // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
             // var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-            var subwaylight = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(0, 6, 0), scene);
+            var subwaylight = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 5.5, 0), scene);
+
+            //shadow generation
             var shadowGenerator = new BABYLON.ShadowGenerator(1024, subwaylight);
+
+            //test sphere for shadows
             var mySphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {diameter: 1}, scene);
             mySphere.position.y = 4
+            shadowGenerator.getShadowMap().renderList.push(mySphere);
             // Default intensity is 1. Let's dim the light a small amount
             // light.intensity = 0.0;
 
@@ -138,6 +143,7 @@
                 newMeshes[0].scaling = new BABYLON.Vector3(.35,.35,.35);
                 shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
                 newMeshes[0].receiveShadows = true;
+                newMeshes[0].convertToFlatShadedMesh;
                 // newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
 
             });
