@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Mafia VR</title>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+        <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+    </head>
+
+   <body>
+
+    <canvas id="renderCanvas" touch-action="none"></canvas> <!-- touch-action="none" for best results from PEP -->
+
+    <script>
+         function createPlayers(number, scene){
+                var x_vals = [0,5,-5,5,-5]
+                var z_vals = [3,3,3,-6,-6]
+
+                while(number > 0) {
+                    number = number - 1;
+                    BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player.glb", scene, function (newMeshes) {
+                        newMeshes[0].position.x = x_vals[number];
+                        newMeshes[0].position.y = 0;
+                        newMeshes[0].position.z = z_vals[number];
+                        newMeshes[0].scaling = new BABYLON.Vector3(.5,.5,.5);
+                        newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+                        console.log(number + " asdf " + x_vals[number+1])
+                        
+                    });
+
+                }
+            }
+
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = null;
+        var scene = null;
+        var sceneToRender = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
+        /******* Add the create scene function ******/
+        var createScene = async function () {
+            // This creates a basic Babylon Scene object (non-mesh)
+            var scene = new BABYLON.Scene(engine);
+
+            // This creates and positions a free camera (non-mesh)
+            var camera = new BABYLON.FlyCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+            // This targets the camera to scene origin
+            camera.setTarget(new BABYLON.Vector3(0,4,3));
+
+            // This attaches the camera to the canvas
+            camera.attachControl(canvas, true);
+
+            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+            // var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+            var subwaylight = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(0, 6, 0), scene);
+            var shadowGenerator = new BABYLON.ShadowGenerator(1024, subwaylight);
+            var mySphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {diameter: 1}, scene);
+            mySphere.position.y = 4
+            // Default intensity is 1. Let's dim the light a small amount
+            // light.intensity = 0.0;
+
+        //    // Our built-in 'sphere' shape.
+        //     var sphere1 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+        //     var sphere2 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+        //     var sphere3 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+        //     var sphere4 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+        //     var sphere5 = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1, segments: 32}, scene);
+
+        //     // Move the sphere upward 1/2 its height
+        //     sphere1.position.y = 4;
+        //     sphere2.position.y = 4;
+        //     sphere3.position.y = 4;
+        //     sphere4.position.y = 4;
+        //     sphere5.position.y = 4;
+
+        //     sphere1.position.x = 0;
+        //     sphere2.position.x = 5;
+        //     sphere3.position.x = -5;
+        //     sphere4.position.x = 5;
+        //     sphere5.position.x = -5;
+
+        //     sphere1.position.z = 3
+        //     sphere2.position.z = 3
+        //     sphere3.position.z = 3
+        //     sphere4.position.z = -6
+        //     sphere5.position.z = -6
+
+            // Our built-in 'ground' shape.
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+            ground.receiveShadows = true;
+
+            scene.createDefaultEnvironment();
+
+            var subway = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "subwayV2.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 0;
+                newMeshes[0].position.y = 5;
+                newMeshes[0].position.z = -1;
+                newMeshes[0].scaling = new BABYLON.Vector3(5,5,5);
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+
+            });
+
+
+            // createPlayers(5, scene);
+
+
+
+            // The first parameter can be used to specify which mesh to import. Here we import all meshes
+
+            //player meshes
+            var buddy1 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_sitting.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 0;
+                newMeshes[0].position.y = 0;
+                newMeshes[0].position.z = 5.5;
+                newMeshes[0].scaling = new BABYLON.Vector3(.35,.35,.35);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                // newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            var buddy2 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_sitting.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = -6;
+                newMeshes[0].position.y = 0;
+                newMeshes[0].position.z = 5.5;
+                newMeshes[0].scaling = new BABYLON.Vector3(.35,.35,.35);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            var buddy3 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_sitting.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 6;
+                newMeshes[0].position.y = 0;
+                newMeshes[0].position.z = 5.5;
+                newMeshes[0].scaling = new BABYLON.Vector3(.35,.35,.35);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            var buddy4 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_sitting.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = -6;
+                newMeshes[0].position.y = 0;
+                newMeshes[0].position.z = -7;
+                newMeshes[0].scaling = new BABYLON.Vector3(.35,.35,.35);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), 3.141592);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            var buddy5 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_sitting.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 6;
+                newMeshes[0].position.y = 0;
+                newMeshes[0].position.z = -7;
+                newMeshes[0].scaling = new BABYLON.Vector3(.35,.35,.35);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), 3.141592);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+
+            //chairs
+            var chair1 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "chair.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 0;
+                newMeshes[0].position.y = 2.5;
+                newMeshes[0].position.z = 6;
+                newMeshes[0].scaling = new BABYLON.Vector3(4,4.5,4.5);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            var chair2 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "chair.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 6;
+                newMeshes[0].position.y = 2.5;
+                newMeshes[0].position.z = 6;
+                newMeshes[0].scaling = new BABYLON.Vector3(4,4.5,4.5);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            var chair3 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "chair.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = -6;
+                newMeshes[0].position.y = 2.5;
+                newMeshes[0].position.z = 6;
+                newMeshes[0].scaling = new BABYLON.Vector3(4,4.5,4.5);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            var chair4 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "chair.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = 6;
+                newMeshes[0].position.y = 2.5;
+                newMeshes[0].position.z = -7.5;
+                newMeshes[0].scaling = new BABYLON.Vector3(4,4.5,4.5);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), 3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            var chair5 = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "chair.glb", scene, function (newMeshes) {
+                // Set the target of the camera to the first imported mesh
+                newMeshes[0].position.x = -6;
+                newMeshes[0].position.y = 2.5;
+                newMeshes[0].position.z = -7.5;
+                newMeshes[0].scaling = new BABYLON.Vector3(4,4.5,4.5);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), 3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+
+            });
+            
+            
+
+            
+            scene.onPointerObservable.add(function(evt){
+                if(evt.pickInfo.hit && evt.pickInfo.pickedMesh && evt.event.button === 0){
+                    selected = evt.pickInfo.pickedMesh;
+                    evt.pickInfo.pickedMesh.material.diffuseColor = BABYLON.Color3.Green();
+                }
+        }, BABYLON.PointerEventTypes.POINTERUP);
+    
+            // Move the light with the camera
+            scene.registerBeforeRender(function () {
+                // light.position = camera.position;
+            });
+            // This is the magic line that allows XR, without it the split screen doesn't work
+            //const xrHelper = await scene.createDefaultXRExperienceAsync();
+            var vrHelper = scene.createDefaultVRExperience({createDeviceOrientationCamera:false});
+            return scene;
+        };
+        /******* End of the create scene function ******/
+
+        var engine;
+        try {
+            engine = createDefaultEngine();
+        } catch(e) {
+            console.log("the available createEngine function failed. Creating the default engine instead");
+            engine = createDefaultEngine();
+        }
+        if (!engine) throw 'engine should not be null.';
+        scene = createScene();
+        scene.then(returnedScene => { sceneToRender = returnedScene; });
+
+
+        engine.runRenderLoop(function () {
+            if (sceneToRender && sceneToRender.activeCamera) {
+                sceneToRender.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+
+   </body>
+
+</html>
