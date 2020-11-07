@@ -49,6 +49,7 @@ export default defineComponent({
 
 .logo {
   width: 50%;
+  max-width: 250px;
 }
 
 .title {

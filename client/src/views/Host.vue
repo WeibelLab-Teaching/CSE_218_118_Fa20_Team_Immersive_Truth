@@ -91,6 +91,7 @@ export default defineComponent({
     color: $grey;
     font-size: $button-font-size;
     margin: 20px;
+    cursor: pointer;
   }
 }
 

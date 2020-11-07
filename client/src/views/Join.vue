@@ -28,7 +28,6 @@ export default defineComponent({
     function next() {
       const roomId = code.value.value;
       if (roomId.length === 0) {
-        // TODO: show tooltip
         tooltip.value.classList.add('show');
         setTimeout(() => {
           tooltip.value.classList.remove('show');
@@ -71,8 +70,7 @@ export default defineComponent({
 
 .next {
   @include button();
-  position: absolute;
-  bottom: 100px;
+  margin-top: 20px;
 }
 
 .tooltip {

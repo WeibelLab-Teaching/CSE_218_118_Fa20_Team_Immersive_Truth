@@ -33,7 +33,7 @@ export default defineComponent({
 
 @media only screen and (min-width: 768px) {
   .logo {
-    width: 5%;
+    width: 50px;
   }
 }
 </style>

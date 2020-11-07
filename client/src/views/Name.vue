@@ -72,15 +72,6 @@ export default defineComponent({
 
 .enter {
   @include button();
-  position: absolute;
-  bottom: 100px;
-}
-
-@media only screen and (min-width: 768px) {
-  .enter {
-    @include button();
-    position: absolute;
-    bottom: 50px;
-  }
+  margin-top: 20px;
 }
 </style>
