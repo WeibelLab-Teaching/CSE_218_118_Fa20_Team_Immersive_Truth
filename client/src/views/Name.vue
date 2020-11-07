@@ -75,4 +75,12 @@ export default defineComponent({
   position: absolute;
   bottom: 100px;
 }
+
+@media only screen and (min-width: 768px) {
+  .enter {
+    @include button();
+    position: absolute;
+    bottom: 50px;
+  }
+}
 </style>

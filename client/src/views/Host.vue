@@ -97,7 +97,7 @@ export default defineComponent({
 .tooltip {
   transition: all 0.3s;
   position: fixed;
-  bottom: 100px;
+  bottom: 75px;
   opacity: 0;
 }
 

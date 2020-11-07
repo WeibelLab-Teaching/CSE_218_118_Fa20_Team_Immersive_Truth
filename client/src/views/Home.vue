@@ -1,11 +1,17 @@
 <template>
   <div class="home">
     <img src="../assets/Shady.svg" alt="logo" class="logo" />
-    <h1 class="title">MAFIA<span class="red">VR</span></h1>
-    <div class="buttons">
-      <button class="button" @click="join">JOIN GAME</button>
-      <button class="button" @click="router.push('/config')">HOST GAME</button>
-      <button class="button" @click="router.push('/rules')">HOW TO PLAY</button>
+    <div class="right">
+      <h1 class="title">MAFIA<span class="red">VR</span></h1>
+      <div class="buttons">
+        <button class="button" @click="join">JOIN GAME</button>
+        <button class="button" @click="router.push('/config')">
+          HOST GAME
+        </button>
+        <button class="button" @click="router.push('/rules')">
+          HOW TO PLAY
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -78,6 +84,17 @@ export default defineComponent({
     background: none;
     border: none;
     outline: none;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .logo {
+    width: 20%;
+    margin-right: 50px;
+  }
+
+  .home {
+    flex-direction: row;
   }
 }
 </style>
