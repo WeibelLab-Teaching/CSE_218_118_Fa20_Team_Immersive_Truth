@@ -61,10 +61,10 @@
             var scene = new BABYLON.Scene(engine);
 
             // This creates and positions a free camera (non-mesh)
-            var camera = new BABYLON.FlyCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+            var camera = new BABYLON.FlyCamera("camera1", new BABYLON.Vector3(10, 2.5, -4), scene);
 
             // This targets the camera to scene origin
-            camera.setTarget(new BABYLON.Vector3(0,4,3));
+            camera.setTarget(new BABYLON.Vector3(10,2,3));
 
             // This attaches the camera to the canvas
             camera.attachControl(canvas, true);
@@ -88,8 +88,8 @@
             // light.intensity = 0.0;
 
             // Our built-in 'ground' shape.
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
-            ground.receiveShadows = true;
+            // var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+            // ground.receiveShadows = true;
 
             scene.createDefaultEnvironment();
             
@@ -105,15 +105,12 @@
             var subway = BABYLON.SceneLoader.ImportMesh("", "./scenes/", "subwayV2.glb", scene, function (newMeshes) {
                 // Set the target of the camera to the first imported mesh
                 newMeshes[0].position.x = 0;
-                newMeshes[0].position.y = 0;
+                newMeshes[0].position.y = 0.001;
                 newMeshes[0].position.z = -1;
                 newMeshes[0].scaling = new BABYLON.Vector3(2,2,2);
                 newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
                 shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
                 newMeshes[0].receiveShadows = true;
-
-
-
                
 
                 newMeshes[0].material = myMaterial;
