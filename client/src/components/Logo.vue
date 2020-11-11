@@ -30,10 +30,4 @@ export default defineComponent({
   left: 20px;
   cursor: pointer;
 }
-
-@media only screen and (min-width: 768px) {
-  .logo {
-    width: 50px;
-  }
-}
 </style>

@@ -72,6 +72,7 @@ export default defineComponent({
 
 .enter {
   @include button();
-  margin-top: 20px;
+  position: absolute;
+  bottom: 100px;
 }
 </style>

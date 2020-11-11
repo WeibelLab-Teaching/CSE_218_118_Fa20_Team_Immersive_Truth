@@ -41,11 +41,11 @@ export default defineComponent({
       {
         role: 'MAFIA',
         detail:
-          'The mafia wants to klil enough villagers in order to take over the village. You can choose to kill one villager during each night phase.',
+          'The mafia wants to kill enough villagers in order to take over the village. You can choose to kill one villager during each night phase.',
       },
       {
         role: 'INVESTIGATOR',
-        detail: `Your eold is to find out who is part of the Mafia memebers. You can investigate one person each night and if they are the part of the mafia, you'll know.`,
+        detail: `Your role is to find out who is part of the Mafia memebers. You can investigate one person each night and if they are the part of the mafia, you'll know.`,
       },
     ]);
 

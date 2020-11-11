@@ -4,7 +4,6 @@
     <div class="title">ROOM CODE?</div>
     <input ref="code" placeholder="ENTER CODE..." type="text" class="code" />
     <button class="next" @click="next">NEXT</button>
-    <div class="tooltip" ref="tooltip">Please enter a room code!</div>
   </div>
 </template>
 
@@ -23,25 +22,15 @@ export default defineComponent({
     const code = ref<HTMLInputElement>(null);
     const store = useStore();
     const router = useRouter();
-    const tooltip = ref<HTMLDivElement>(null);
 
     function next() {
-      const roomId = code.value.value;
-      if (roomId.length === 0) {
-        tooltip.value.classList.add('show');
-        setTimeout(() => {
-          tooltip.value.classList.remove('show');
-        }, 2000);
-      } else {
-        store.commit('setRoomId', code.value.value);
-        router.push('/name');
-      }
+      store.commit('setRoomId', code.value.value);
+      router.push('/name');
     }
 
     return {
       code,
       next,
-      tooltip,
     };
   },
 });
@@ -70,17 +59,7 @@ export default defineComponent({
 
 .next {
   @include button();
-  margin-top: 20px;
-}
-
-.tooltip {
-  transition: all 0.3s;
-  position: fixed;
-  bottom: 75px;
-  opacity: 0;
-}
-
-.show {
-  opacity: 1;
+  position: absolute;
+  bottom: 100px;
 }
 </style>

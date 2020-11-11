@@ -38,8 +38,9 @@
           <option value="2">2</option>
         </select>
       </div>
-      <button class="next" @click="next">NEXT</button>
     </div>
+
+    <button class="next" @click="next">NEXT</button>
   </div>
 </template>
 
@@ -131,12 +132,9 @@ export default defineComponent({
   align-items: center;
 }
 
-select {
-  width: 100px;
-}
-
 .next {
   @include button();
-  margin-top: 20px;
+  position: absolute;
+  bottom: 100px;
 }
 </style>

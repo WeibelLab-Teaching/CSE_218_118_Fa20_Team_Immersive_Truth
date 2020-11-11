@@ -91,14 +91,13 @@ export default defineComponent({
     color: $grey;
     font-size: $button-font-size;
     margin: 20px;
-    cursor: pointer;
   }
 }
 
 .tooltip {
   transition: all 0.3s;
   position: fixed;
-  bottom: 75px;
+  bottom: 100px;
   opacity: 0;
 }
 
