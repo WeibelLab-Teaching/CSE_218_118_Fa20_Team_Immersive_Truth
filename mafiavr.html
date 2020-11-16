@@ -73,8 +73,12 @@
 
             // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
             //var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-            var subwaylight = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(0, 0, 0), scene);
-
+            var subwaylight = new BABYLON.SpotLight("light2", new BABYLON.Vector3(7, 10, -1), new BABYLON.Vector3(0,-1,0), 3, 2, scene);
+            subwaylight.diffuse = new BABYLON.Color3.Yellow()
+            var subwaylight2 = new BABYLON.SpotLight("light3", new BABYLON.Vector3(-7, 10, -1), new BABYLON.Vector3(0,-1,0), 3, 2, scene);
+            subwaylight2.diffuse = new BABYLON.Color3.Red()
+           
+           
             //shadow generation
             
 
@@ -83,10 +87,13 @@
             mySphere.position.y = 1;
             mySphere.position.x = 1;
             var shadowGenerator = new BABYLON.ShadowGenerator(1024, subwaylight);
-            shadowGenerator.getShadowMap().renderList.push(mySphere);
             shadowGenerator.useBlurExponentialShadowMap = true;
             shadowGenerator.useKernelBlur = true;
             shadowGenerator.blurKernel = 64;
+            var shadowGenerator2 = new BABYLON.ShadowGenerator(1024, subwaylight2);
+            shadowGenerator2.useBlurExponentialShadowMap = true;
+            shadowGenerator2.useKernelBlur = true;
+            shadowGenerator2.blurKernel = 64;
             // Default intensity is 1. Let's dim the light a small amount
             // light.intensity = 0.0;
 
@@ -97,7 +104,18 @@
             var enviroment = scene.createDefaultEnvironment({enableGroundShadow: true, groundYBias: 1});
 
 
-            BABYLON.SceneLoader.ImportMesh("Subway", "./scenes/", "subway.babylon", scene, function (newMeshes) {
+            BABYLON.SceneLoader.ImportMesh(null, "./scenes/", "subway (with modifiers).obj", scene, function (newMeshes) {
+                
+                // for(var i = 0; i < newMeshes.lenth; i++){
+                //     console.log(newMeshes[i])
+                //     newMeshes[i].position.x = 0;
+                //     newMeshes[i].position.y = 0.001;
+                //     newMeshes[i].position.z = -1;
+                //     newMeshes[i].scaling = new BABYLON.Vector3(2,2,2);
+                //     newMeshes[i].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                //     shadowGenerator.getShadowMap().renderList.push(newMeshes[i]);
+                //     newMeshes[i].receiveShadows = true;
+                // }
 
                 newMeshes[0].position.x = 0;
                 newMeshes[0].position.y = 0.001;
@@ -106,98 +124,116 @@
                 newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
                 shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
                 newMeshes[0].receiveShadows = true;
-                
+
+                newMeshes[1].position.x = 0;
+                newMeshes[1].position.y = 0.001;
+                newMeshes[1].position.z = -1;
+                newMeshes[1].scaling = new BABYLON.Vector3(2,2,2);
+                newMeshes[1].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[1]);
+                newMeshes[1].receiveShadows = true;
+
+                newMeshes[2].position.x = 0;
+                newMeshes[2].position.y = 0.001;
+                newMeshes[2].position.z = -1;
+                newMeshes[2].scaling = new BABYLON.Vector3(2,2,2);
+                newMeshes[2].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[2]);
+                newMeshes[2].receiveShadows = true;
             });
 
             //player meshes
-            BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_sitting.glb", scene, function (newMeshes, particleSystems, skeletons) {
+            BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_rigged.obj", scene, function (newMeshes, particleSystems, skeletons) {
                 var buddy1 = newMeshes[0];
                 buddy1.scaling = new BABYLON.Vector3(.2,.2,.2);
-
-                var buddy2 = buddy1.clone("buddy2");
-                var buddy3 = buddy1.clone("buddy3");
-                var buddy4 = buddy1.clone("buddy4");
-                var buddy5 = buddy1.clone("buddy5");
-                var buddy6 = buddy1.clone("buddy6");
-                var buddy7 = buddy1.clone("buddy7");
-                var buddy8 = buddy1.clone("buddy8");
-
+                var x_vals = [11.6,10,8.5,7,11.6,8.5,7]
+                var y_vals = -.6
+                var z_vals = [-3.1,-3.1,-3.1,-3.1,1.1,1.1,1.1]
 
                 // Buddy 1 location and shadows
                 buddy1.position.x = 10;
                 buddy1.position.y = -.6;
                 buddy1.position.z = 1.15;
-                shadowGenerator.getShadowMap().renderList.push(buddy1);
+
+                buddy1.rotate(new BABYLON.Vector3(0,1,0), Math.PI)
                 buddy1.receiveShadows = true;
-                buddy1.convertToFlatShadedMesh;
+                // buddy1.convertToFlatShadedMesh;
 
-                // Buddy 2 location and shadows
-                buddy2.position.x = 11.6;
-                buddy2.position.y = -.6;
-                buddy2.position.z = 1.15;
-                buddy2.scaling = new BABYLON.Vector3(.2,.2,.2);
-                shadowGenerator.getShadowMap().renderList.push(buddy2);
-                buddy2.receiveShadows = true;
 
-                // Buddy 3 location and shadows
-                buddy3.position.x = 8.5;
-                buddy3.position.y = -.6;
-                buddy3.position.z = 1.15;
-                buddy3.scaling = new BABYLON.Vector3(.2,.2,.2);
-                shadowGenerator.getShadowMap().renderList.push(buddy3);
-                buddy3.receiveShadows = true;
 
-                // Buddy 4 location and shadows
-                buddy4.position.x = 11.6;
-                buddy4.position.y = -.6;
-                buddy4.position.z = -3.2;
-                buddy4.scaling = new BABYLON.Vector3(.2,.2,.2);
-                buddy4.rotate(new BABYLON.Vector3(0,1,0), 3.141592);
-                shadowGenerator.getShadowMap().renderList.push(buddy4);
-                buddy4.receiveShadows = true;
+                for (var i = 0; i < x_vals.length; i++){
+                    var newBuddy = buddy1.clone("buddy" + i);
+                    newBuddy.position.x = x_vals[i];
+                    newBuddy.position.y = y_vals;
+                    newBuddy.position.z = z_vals[i];
+                    //var newSkeleton = buddy1.skeleton.clone("skeleton" + i);
+                    if(i < 4)
+                        newBuddy.rotate(new BABYLON.Vector3(0,1,0), Math.PI);
 
-                // Buddy 5 location and shadows
-                buddy5.position.x = 10;
-                buddy5.position.y = -.6;
-                buddy5.position.z = -3.2;
-                buddy5.scaling = new BABYLON.Vector3(.2,.2,.2);
-                buddy5.rotate(new BABYLON.Vector3(0,1,0), 3.141592);
-                shadowGenerator.getShadowMap().renderList.push(buddy5);
-                buddy5.receiveShadows = true;
+                }
+                var frameRate = 10
 
-                // Buddy 6 location and shadows
-                buddy6.position.x = 8.5;
-                buddy6.position.y = -.6;
-                buddy6.position.z = -3.2;
-                buddy6.scaling = new BABYLON.Vector3(.2,.2,.2);
-                buddy6.rotate(new BABYLON.Vector3(0,1,0), 3.141592);
-                shadowGenerator.getShadowMap().renderList.push(buddy6);
-                buddy6.receiveShadows = true;
+                var xSlide = new BABYLON.Animation("xSlide", "position.x", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+                var keyFrames = []; 
 
-                // Buddy 7 Location and shadows
-                buddy7.position.x = 7;
-                buddy7.position.y = -.6;
-                buddy7.position.z = -3.2;
-                buddy7.scaling = new BABYLON.Vector3(.2,.2,.2);
-                buddy7.rotate(new BABYLON.Vector3(0,1,0), 3.141592);
-                shadowGenerator.getShadowMap().renderList.push(buddy7);
-                buddy7.receiveShadows = true;
+                keyFrames.push({
+                    frame: 0,
+                    value: 2
+                });
 
-                // Buddy 8 location  and shadows
-                buddy8.position.x = 7;
-                buddy8.position.y = -.6;
-                buddy8.position.z = 1.15;
-                buddy8.scaling = new BABYLON.Vector3(.2,.2,.2);
-                shadowGenerator.getShadowMap().renderList.push(buddy8);
-                buddy8.receiveShadows = true;
+                keyFrames.push({
+                    frame: frameRate,
+                    value: -2
+                });
+
+                keyFrames.push({
+                    frame: 2 * frameRate,
+                    value: 2
+                });
+
+                xSlide.setKeys(keyFrames);
+
+                scene.beginDirectAnimation(buddy1, [xSlide], 0, 2 * frameRate, true);
+
             });
 
-            scene.onPointerObservable.add(function(evt){
-                if(evt.pickInfo.hit && evt.pickInfo.pickedMesh && evt.event.button === 0){
-                    selected = evt.pickInfo.pickedMesh;
-                    evt.pickInfo.pickedMesh.material.diffuseColor = BABYLON.Color3.Green();
-                }
-        }, BABYLON.PointerEventTypes.POINTERUP);
+            var pointer = BABYLON.MeshBuilder.CreateSphere("myPointer", {diameter: 1}, scene);
+
+            // function onPointerMove(evt) {
+            //     pointer.position.x = evt.pickInfo.pickedPoint.x;
+            //     pointer.position.y = evt.pickInfo.pickedPoint.y;
+                // console.log('moved to ' + evt.pickInfo.pickedPoint)
+
+            // }
+            
+            // canvas.addEventListener("pointermove", onPointerMove, false);
+            // var getGroundPosition = function () {
+            //     var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
+            //     if (pickinfo.hit) {
+            //         return pickinfo.pickedPoint;
+            //     }
+
+            //     return null;
+            // }
+
+            // scene.onPointerObservable.add((pointerInfo) => {      		
+            //     switch (pointerInfo.type) {
+            //         case BABYLON.PointerEventTypes.POINTERDOWN:
+            //             if(pointerInfo.pickInfo.hit && pointerInfo.pickInfo.pickedMesh != ground) {
+            //                 console.log('clicked something')
+            //             }
+            //             break;
+            //         case BABYLON.PointerEventTypes.POINTERMOVE:          
+            //                 console.log('moving')
+            //                 var current = getGroundPosition();
+
+            //                 pointer.position.x = pointerInfo.x;
+            //                 pointer.position.y = pointerInfo.y;
+            //                 console.log('moved to ' + current)
+
+            //             break;
+            //     }
+            // });
     
             // Move the light with the camera
             scene.registerBeforeRender(function () {
@@ -206,6 +242,7 @@
             // This is the magic line that allows XR, without it the split screen doesn't work
             //const xrHelper = await scene.createDefaultXRExperienceAsync();
             var vrHelper = scene.createDefaultVRExperience({createDeviceOrientationCamera:false});
+            vrHelper.enableInteractions();
             vrHelper.enableTeleportation({floorMeshes: [enviroment.ground]});
             return scene;
         };
