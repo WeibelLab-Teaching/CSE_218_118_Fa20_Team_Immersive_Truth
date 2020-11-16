@@ -72,8 +72,8 @@
             camera.attachControl(canvas, true);
 
             // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-            //var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-            var subwaylight = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(0, 0, 0), scene);
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+            var subwaylight = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1.5, -1), scene);
 
             //shadow generation
             
@@ -97,7 +97,18 @@
             var enviroment = scene.createDefaultEnvironment({enableGroundShadow: true, groundYBias: 1});
 
 
-            BABYLON.SceneLoader.ImportMesh("Subway", "./scenes/", "subway.babylon", scene, function (newMeshes) {
+            BABYLON.SceneLoader.ImportMesh(null, "./scenes/", "subway (with modifiers).obj", scene, function (newMeshes) {
+                
+                // for(var i = 0; i < newMeshes.lenth; i++){
+                //     console.log(newMeshes[i])
+                //     newMeshes[i].position.x = 0;
+                //     newMeshes[i].position.y = 0.001;
+                //     newMeshes[i].position.z = -1;
+                //     newMeshes[i].scaling = new BABYLON.Vector3(2,2,2);
+                //     newMeshes[i].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                //     shadowGenerator.getShadowMap().renderList.push(newMeshes[i]);
+                //     newMeshes[i].receiveShadows = true;
+                // }
 
                 newMeshes[0].position.x = 0;
                 newMeshes[0].position.y = 0.001;
@@ -106,6 +117,23 @@
                 newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
                 shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
                 newMeshes[0].receiveShadows = true;
+
+                newMeshes[1].position.x = 0;
+                newMeshes[1].position.y = 0.001;
+                newMeshes[1].position.z = -1;
+                newMeshes[1].scaling = new BABYLON.Vector3(2,2,2);
+                newMeshes[1].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[1]);
+                newMeshes[1].receiveShadows = true;
+
+                newMeshes[2].position.x = 0;
+                newMeshes[2].position.y = 0.001;
+                newMeshes[2].position.z = -1;
+                newMeshes[2].scaling = new BABYLON.Vector3(2,2,2);
+                newMeshes[2].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[2]);
+                newMeshes[2].receiveShadows = true;
+                
                 
             });
 
