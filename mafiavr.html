@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Mafia VR</title>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+        <script src="https://preview.babylonjs.com/gltf_validator.js"></script>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+        <script src="babylon.stlFileLoader.js"></script>
+    </head>
+
+   <body>
+
+    <canvas id="renderCanvas" touch-action="none"></canvas> <!-- touch-action="none" for best results from PEP -->
+
+    <script>
+         function createPlayers(number, scene){
+                var x_vals = [0,5,-5,5,-5]
+                var z_vals = [3,3,3,-6,-6]
+
+                while(number > 0) {
+                    number = number - 1;
+                    BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player.glb", scene, function (newMeshes) {
+                        newMeshes[0].position.x = x_vals[number];
+                        newMeshes[0].position.y = 0;
+                        newMeshes[0].position.z = z_vals[number];
+                        newMeshes[0].scaling = new BABYLON.Vector3(.5,.5,.5);
+                        newMeshes[0].material = new BABYLON.StandardMaterial("cylinder_mat", scene);
+                        console.log(number + " asdf " + x_vals[number+1])
+                        
+                    });
+
+                }
+            }
+
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = null;
+        var scene = null;
+        var sceneToRender = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
+        /******* Add the create scene function ******/
+        var createScene = async function () {
+            // This creates a basic Babylon Scene object (non-mesh)
+            var scene = new BABYLON.Scene(engine);
+
+            // This creates and positions a free camera (non-mesh)
+            var camera = new BABYLON.FlyCamera("camera1", new BABYLON.Vector3(10, 2.5, -4), scene);
+
+            // This targets the camera to scene origin
+            camera.setTarget(new BABYLON.Vector3(10,2,3));
+
+            // This attaches the camera to the canvas
+            camera.attachControl(canvas, true);
+
+            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+            //var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+            var subwaylight = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(0, 0, 0), scene);
+
+            //shadow generation
+            
+
+            //test sphere for shadows
+            var mySphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {diameter: 1}, scene);
+            mySphere.position.y = 1;
+            mySphere.position.x = 1;
+            var shadowGenerator = new BABYLON.ShadowGenerator(1024, subwaylight);
+            shadowGenerator.getShadowMap().renderList.push(mySphere);
+            shadowGenerator.useBlurExponentialShadowMap = true;
+            shadowGenerator.useKernelBlur = true;
+            shadowGenerator.blurKernel = 64;
+            // Default intensity is 1. Let's dim the light a small amount
+            // light.intensity = 0.0;
+
+            // Our built-in 'ground' shape.
+            var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+            ground.receiveShadows = true;
+
+            var enviroment = scene.createDefaultEnvironment({enableGroundShadow: true, groundYBias: 1});
+
+
+            BABYLON.SceneLoader.ImportMesh("Subway", "./scenes/", "subway.babylon", scene, function (newMeshes) {
+
+                newMeshes[0].position.x = 0;
+                newMeshes[0].position.y = 0.001;
+                newMeshes[0].position.z = -1;
+                newMeshes[0].scaling = new BABYLON.Vector3(2,2,2);
+                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
+                newMeshes[0].receiveShadows = true;
+                
+            });
+
+            //player meshes
+            BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_sitting.glb", scene, function (newMeshes, particleSystems, skeletons) {
+                var buddy1 = newMeshes[0];
+                buddy1.scaling = new BABYLON.Vector3(.2,.2,.2);
+
+                var buddy2 = buddy1.clone("buddy2");
+                var buddy3 = buddy1.clone("buddy3");
+                var buddy4 = buddy1.clone("buddy4");
+                var buddy5 = buddy1.clone("buddy5");
+                var buddy6 = buddy1.clone("buddy6");
+                var buddy7 = buddy1.clone("buddy7");
+                var buddy8 = buddy1.clone("buddy8");
+
+
+                // Buddy 1 location and shadows
+                buddy1.position.x = 10;
+                buddy1.position.y = -.6;
+                buddy1.position.z = 1.15;
+                shadowGenerator.getShadowMap().renderList.push(buddy1);
+                buddy1.receiveShadows = true;
+                buddy1.convertToFlatShadedMesh;
+
+                // Buddy 2 location and shadows
+                buddy2.position.x = 11.6;
+                buddy2.position.y = -.6;
+                buddy2.position.z = 1.15;
+                buddy2.scaling = new BABYLON.Vector3(.2,.2,.2);
+                shadowGenerator.getShadowMap().renderList.push(buddy2);
+                buddy2.receiveShadows = true;
+
+                // Buddy 3 location and shadows
+                buddy3.position.x = 8.5;
+                buddy3.position.y = -.6;
+                buddy3.position.z = 1.15;
+                buddy3.scaling = new BABYLON.Vector3(.2,.2,.2);
+                shadowGenerator.getShadowMap().renderList.push(buddy3);
+                buddy3.receiveShadows = true;
+
+                // Buddy 4 location and shadows
+                buddy4.position.x = 11.6;
+                buddy4.position.y = -.6;
+                buddy4.position.z = -3.2;
+                buddy4.scaling = new BABYLON.Vector3(.2,.2,.2);
+                buddy4.rotate(new BABYLON.Vector3(0,1,0), 3.141592);
+                shadowGenerator.getShadowMap().renderList.push(buddy4);
+                buddy4.receiveShadows = true;
+
+                // Buddy 5 location and shadows
+                buddy5.position.x = 10;
+                buddy5.position.y = -.6;
+                buddy5.position.z = -3.2;
+                buddy5.scaling = new BABYLON.Vector3(.2,.2,.2);
+                buddy5.rotate(new BABYLON.Vector3(0,1,0), 3.141592);
+                shadowGenerator.getShadowMap().renderList.push(buddy5);
+                buddy5.receiveShadows = true;
+
+                // Buddy 6 location and shadows
+                buddy6.position.x = 8.5;
+                buddy6.position.y = -.6;
+                buddy6.position.z = -3.2;
+                buddy6.scaling = new BABYLON.Vector3(.2,.2,.2);
+                buddy6.rotate(new BABYLON.Vector3(0,1,0), 3.141592);
+                shadowGenerator.getShadowMap().renderList.push(buddy6);
+                buddy6.receiveShadows = true;
+
+                // Buddy 7 Location and shadows
+                buddy7.position.x = 7;
+                buddy7.position.y = -.6;
+                buddy7.position.z = -3.2;
+                buddy7.scaling = new BABYLON.Vector3(.2,.2,.2);
+                buddy7.rotate(new BABYLON.Vector3(0,1,0), 3.141592);
+                shadowGenerator.getShadowMap().renderList.push(buddy7);
+                buddy7.receiveShadows = true;
+
+                // Buddy 8 location  and shadows
+                buddy8.position.x = 7;
+                buddy8.position.y = -.6;
+                buddy8.position.z = 1.15;
+                buddy8.scaling = new BABYLON.Vector3(.2,.2,.2);
+                shadowGenerator.getShadowMap().renderList.push(buddy8);
+                buddy8.receiveShadows = true;
+            });
+
+            scene.onPointerObservable.add(function(evt){
+                if(evt.pickInfo.hit && evt.pickInfo.pickedMesh && evt.event.button === 0){
+                    selected = evt.pickInfo.pickedMesh;
+                    evt.pickInfo.pickedMesh.material.diffuseColor = BABYLON.Color3.Green();
+                }
+        }, BABYLON.PointerEventTypes.POINTERUP);
+    
+            // Move the light with the camera
+            scene.registerBeforeRender(function () {
+                // light.position = camera.position;
+            });
+            // This is the magic line that allows XR, without it the split screen doesn't work
+            //const xrHelper = await scene.createDefaultXRExperienceAsync();
+            var vrHelper = scene.createDefaultVRExperience({createDeviceOrientationCamera:false});
+            vrHelper.enableTeleportation({floorMeshes: [enviroment.ground]});
+            return scene;
+        };
+        /******* End of the create scene function ******/
+
+        var engine;
+        try {
+            engine = createDefaultEngine();
+        } catch(e) {
+            console.log("the available createEngine function failed. Creating the default engine instead");
+            engine = createDefaultEngine();
+        }
+        if (!engine) throw 'engine should not be null.';
+        scene = createScene();
+        scene.then(returnedScene => { sceneToRender = returnedScene; });
+
+
+        engine.runRenderLoop(function () {
+            if (sceneToRender && sceneToRender.activeCamera) {
+                sceneToRender.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+
+   </body>
+
+</html>
