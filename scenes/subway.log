@@ -1,0 +1,50 @@
+Exporter version: 6.4.5, Blender version: 2.90.1
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used :
+		Inline textures     :  false
+		Material Type       :  PBR
+		Positions Precision :  4
+		Normals Precision   :  3
+		UVs Precision       :  3
+		Vert Color Precision:  3
+		Mat Weight Precision:  2
+		Keep Z-up r-handed  :  no
+		Texture directory   :  /Users/dayyansisson/Desktop/
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of mesh:  Handle
+		processing begun of material:  Default
+		num positions      :  5008
+		num normals        :  5008
+		num tangents       :  0
+		num uvs            :  10016
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  1880
+	processing begun of mesh:  Subway
+		processing begun of material:  Default
+		registered as also a user of material:  Default
+		num positions      :  10698
+		num normals        :  10698
+		num tangents       :  0
+		num uvs            :  21396
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  4784
+	processing begun of mesh:  Handle.001
+		processing begun of material:  Default
+		registered as also a user of material:  Default
+		num positions      :  5008
+		num normals        :  5008
+		num tangents       :  0
+		num uvs            :  10016
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  1880
+========= Writing of JSON file started =========
+	writing mesh:  Handle
+	writing mesh:  Subway
+	writing mesh:  Handle.001
+========= Writing of JSON file completed =========
+========= end of processing =========
+elapsed time:  0 min, 0.4775 secs
