@@ -25,6 +25,8 @@
         <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
         <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
         <script src="babylon.stlFileLoader.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
     </head>
 
    <body>
@@ -102,54 +104,31 @@
             ground.receiveShadows = true;
 
             var enviroment = scene.createDefaultEnvironment({enableGroundShadow: true, groundYBias: 1});
-
+            var defaultBuddyColor
 
             BABYLON.SceneLoader.ImportMesh(null, "./scenes/", "subway (with modifiers).obj", scene, function (newMeshes) {
-                
-                // for(var i = 0; i < newMeshes.lenth; i++){
-                //     console.log(newMeshes[i])
-                //     newMeshes[i].position.x = 0;
-                //     newMeshes[i].position.y = 0.001;
-                //     newMeshes[i].position.z = -1;
-                //     newMeshes[i].scaling = new BABYLON.Vector3(2,2,2);
-                //     newMeshes[i].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
-                //     shadowGenerator.getShadowMap().renderList.push(newMeshes[i]);
-                //     newMeshes[i].receiveShadows = true;
-                // }
-
-                newMeshes[0].position.x = 0;
-                newMeshes[0].position.y = 0.001;
-                newMeshes[0].position.z = -1;
-                newMeshes[0].scaling = new BABYLON.Vector3(2,2,2);
-                newMeshes[0].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
-                shadowGenerator.getShadowMap().renderList.push(newMeshes[0]);
-                newMeshes[0].receiveShadows = true;
-
-                newMeshes[1].position.x = 0;
-                newMeshes[1].position.y = 0.001;
-                newMeshes[1].position.z = -1;
-                newMeshes[1].scaling = new BABYLON.Vector3(2,2,2);
-                newMeshes[1].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
-                shadowGenerator.getShadowMap().renderList.push(newMeshes[1]);
-                newMeshes[1].receiveShadows = true;
-
-                newMeshes[2].position.x = 0;
-                newMeshes[2].position.y = 0.001;
-                newMeshes[2].position.z = -1;
-                newMeshes[2].scaling = new BABYLON.Vector3(2,2,2);
-                newMeshes[2].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
-                shadowGenerator.getShadowMap().renderList.push(newMeshes[2]);
-                newMeshes[2].receiveShadows = true;
+                for(var i = 0; i < newMeshes.length; i++){
+                    console.log(newMeshes[i].name)
+                    newMeshes[i].position.x = 0;
+                    newMeshes[i].position.y = 0.001;
+                    newMeshes[i].position.z = -1;
+                    newMeshes[i].scaling = new BABYLON.Vector3(4,2,2);
+                    newMeshes[i].rotate(new BABYLON.Vector3(0,1,0), -3.141592/2);
+                    shadowGenerator.getShadowMap().renderList.push(newMeshes[i]);
+                    newMeshes[i].receiveShadows = true;
+                }
             });
 
             //player meshes
             BABYLON.SceneLoader.ImportMesh("", "./scenes/", "player_rigged.obj", scene, function (newMeshes, particleSystems, skeletons) {
                 var buddy1 = newMeshes[0];
+                buddy1.name = "buddy"
                 buddy1.scaling = new BABYLON.Vector3(.2,.2,.2);
                 var x_vals = [11.6,10,8.5,7,11.6,8.5,7]
                 var y_vals = -.6
-                var z_vals = [-3.1,-3.1,-3.1,-3.1,1.1,1.1,1.1]
-
+                var z_vals = [-3.1,-3.1,-3.1,-3.1,3.1,3.1,3.1]
+                defaultBuddyColor = buddy1.diffuseColor
+                console.log(defaultBuddyColor)
                 // Buddy 1 location and shadows
                 buddy1.position.x = 10;
                 buddy1.position.y = -.6;
@@ -157,16 +136,15 @@
 
                 buddy1.rotate(new BABYLON.Vector3(0,1,0), Math.PI)
                 buddy1.receiveShadows = true;
-                // buddy1.convertToFlatShadedMesh;
-
-
+                
 
                 for (var i = 0; i < x_vals.length; i++){
                     var newBuddy = buddy1.clone("buddy" + i);
+                    console.log(newBuddy.name)
                     newBuddy.position.x = x_vals[i];
                     newBuddy.position.y = y_vals;
                     newBuddy.position.z = z_vals[i];
-                    //var newSkeleton = buddy1.skeleton.clone("skeleton" + i);
+                    newBuddy.material = new BABYLON.StandardMaterial()
                     if(i < 4)
                         newBuddy.rotate(new BABYLON.Vector3(0,1,0), Math.PI);
 
@@ -197,44 +175,73 @@
 
             });
 
-            var pointer = BABYLON.MeshBuilder.CreateSphere("myPointer", {diameter: 1}, scene);
+            // Set UI Control panel
+            var guiManager = new BABYLON.GUI.GUI3DManager(scene);
+            var guiPanel = new BABYLON.GUI.StackPanel3D();
+            guiPanel.margin = 0.02;
+            guiManager.addControl(guiPanel);
+            guiPanel.linkToTransformNode(scene.activeCamera);
+            guiPanel.node.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+            guiPanel.position.z = 3;
+            guiPanel.position.y = -1;
+            guiPanel.node.rotation = new BABYLON.Vector3(Math.PI/3, 0, 0);
 
-            // function onPointerMove(evt) {
-            //     pointer.position.x = evt.pickInfo.pickedPoint.x;
-            //     pointer.position.y = evt.pickInfo.pickedPoint.y;
-                // console.log('moved to ' + evt.pickInfo.pickedPoint)
+            //// add buttons
+            // follow / walking mode button
+            let kill = new BABYLON.GUI.HolographicButton("Kill them");
+            guiPanel.addControl(kill);
+            // change environment button
+            let save = new BABYLON.GUI.HolographicButton("Save them");
+            guiPanel.addControl(save);
+            // play button
+            let pass = new BABYLON.GUI.HolographicButton("Do Nothing");
+            guiPanel.addControl(pass);
 
-            // }
-            
-            // canvas.addEventListener("pointermove", onPointerMove, false);
-            // var getGroundPosition = function () {
-            //     var pickinfo = scene.pick(scene.pointerX, scene.pointerY, function (mesh) { return mesh == ground; });
-            //     if (pickinfo.hit) {
-            //         return pickinfo.pickedPoint;
-            //     }
+        //// add text
+            // follow
+            let toggleFollowText = new BABYLON.GUI.TextBlock();
+            toggleFollowText.text = "Kill Them";
+            toggleFollowText.color = "white";
+            toggleFollowText.fontSize = 30;
+            kill.content = toggleFollowText;
+            // environment
+            let envText = new BABYLON.GUI.TextBlock();
+            envText.text = "Save Them";
+            envText.color = "white";
+            envText.fontSize = 30;
+            save.content = envText;
+            // play
+            let playText = new BABYLON.GUI.TextBlock();
+            playText.text = "Do Nothing";
+            playText.color = "white";
+            playText.fontSize = 30;
+            pass.content = playText;
 
-            //     return null;
-            // }
 
-            // scene.onPointerObservable.add((pointerInfo) => {      		
-            //     switch (pointerInfo.type) {
-            //         case BABYLON.PointerEventTypes.POINTERDOWN:
-            //             if(pointerInfo.pickInfo.hit && pointerInfo.pickInfo.pickedMesh != ground) {
-            //                 console.log('clicked something')
-            //             }
-            //             break;
-            //         case BABYLON.PointerEventTypes.POINTERMOVE:          
-            //                 console.log('moving')
-            //                 var current = getGroundPosition();
+            var selectedMesh
+            var hl = new BABYLON.HighlightLayer("hl1", scene);
 
-            //                 pointer.position.x = pointerInfo.x;
-            //                 pointer.position.y = pointerInfo.y;
-            //                 console.log('moved to ' + current)
+            scene.onPointerObservable.add((pointerInfo) => {      		
+                switch (pointerInfo.type) {
+                    case BABYLON.PointerEventTypes.POINTERDOWN:
+                        if(pointerInfo.pickInfo.hit && pointerInfo.pickInfo.pickedMesh != ground) {
 
-            //             break;
-            //     }
-            // });
-    
+                            console.log('clicked something')
+                            selected = pointerInfo.pickInfo.pickedMesh;
+
+                            if(selected.name.includes('buddy'))
+                                selected.material.diffuseColor = new BABYLON.Color3.Green();
+                            if(selectedMesh != null && selected != selectedMesh){
+                                selectedMesh.material.diffuseColor = new BABYLON.Color3.White();
+                                h1.addMesh(selected, BABYLON.Color3.Red())
+                            }
+                                // h1.addMesh(selected, BABYLON.Color3.Red())
+                            selectedMesh = selected
+                        }
+                        break;
+                }
+            });
+                    
             // Move the light with the camera
             scene.registerBeforeRender(function () {
                 // light.position = camera.position;
@@ -243,7 +250,7 @@
             //const xrHelper = await scene.createDefaultXRExperienceAsync();
             var vrHelper = scene.createDefaultVRExperience({createDeviceOrientationCamera:false});
             vrHelper.enableInteractions();
-            vrHelper.enableTeleportation({floorMeshes: [enviroment.ground]});
+            // vrHelper.enableTeleportation({floorMeshes: [enviroment.ground]});
             return scene;
         };
         /******* End of the create scene function ******/
