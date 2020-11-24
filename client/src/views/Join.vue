@@ -19,12 +19,12 @@ export default defineComponent({
     Logo,
   },
   setup() {
-    const code = ref<HTMLInputElement>(null);
+    const code = ref<HTMLInputElement | null>(null);
     const store = useStore();
     const router = useRouter();
 
     function next() {
-      store.commit('setRoomId', code.value.value);
+      store.commit('setRoomId', code.value?.value);
       router.push('/name');
     }
 

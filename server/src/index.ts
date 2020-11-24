@@ -1,24 +1,29 @@
 import express from 'express';
 import http from 'http';
-import socketio from 'socket.io';
 import cors from 'cors';
+import chalk from 'chalk';
+import { Server as SocketIO } from 'socket.io';
 
-import setupSocket from './socketio';
+import { setupSocketIO } from './socketio';
 
-const PORT = 3000;
+const PORT = 9999;
 
 const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
-
 app.use(cors());
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+const server = http.createServer(app);
+const io = new SocketIO(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['*'],
+    credentials: true,
+  },
 });
 
-setupSocket(io);
+setupSocketIO(io);
 
 server.listen(PORT, () => {
-  console.log(`Server started on http://localhost:${PORT}`);
+  console.log(
+    `Server successfully started on ${chalk.yellow(`http://localhost:${PORT}`)}`
+  );
 });

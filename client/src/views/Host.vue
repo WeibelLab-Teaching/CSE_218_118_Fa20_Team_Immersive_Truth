@@ -26,8 +26,8 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const roomId = ref(uuid());
-    const copyBtn = ref<HTMLButtonElement>(null);
-    const tooltip = ref<HTMLDivElement>(null);
+    const copyBtn = ref<HTMLButtonElement | null>(null);
+    const tooltip = ref<HTMLDivElement | null>(null);
 
     // Vuex updates
     const store = useStore();
@@ -35,10 +35,10 @@ export default defineComponent({
 
     onMounted(() => {
       const clipboard = new ClipboardJS(copyBtn.value);
-      clipboard.on('success', (e) => {
-        tooltip.value.classList.add('show');
+      clipboard.on('success', (e: any) => {
+        tooltip.value?.classList.add('show');
         setTimeout(() => {
-          tooltip.value.classList.remove('show');
+          tooltip.value?.classList.remove('show');
         }, 2000);
         e.clearSelection();
       });
