@@ -37,7 +37,6 @@
 
     <script>
         var canvas = document.getElementById("renderCanvas");
-
         var engine = null;
         var scene = null;
         var sceneToRender = null;
@@ -62,13 +61,13 @@
 
             // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
             //var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
-            var subwaylight = new BABYLON.SpotLight("light2", new BABYLON.Vector3(7, 10, -1), new BABYLON.Vector3(0, -1, 0), 3, 2, scene);
+            var subwaylight = new BABYLON.SpotLight("light2", new BABYLON.Vector3(7, 10, 0), new BABYLON.Vector3(0, -1, 0), 3, 2, scene);
             subwaylight.diffuse = new BABYLON.Color3.White()
-            var subwaylight2 = new BABYLON.SpotLight("light3", new BABYLON.Vector3(-7, 10, -1), new BABYLON.Vector3(0, -1, 0), 3, 2, scene);
-            // subwaylight2.diffuse = new BABYLON.Color3.Red()
+            var subwaylight2 = new BABYLON.SpotLight("light3", new BABYLON.Vector3(-7, 10, 0), new BABYLON.Vector3(0, -1, 0), 3, 2, scene);
+            subwaylight2.diffuse = new BABYLON.Color3.Red()
 
-
-            //shadow generation
+            subwaylight.intensity = 3
+                //shadow generation
 
 
             //test sphere for shadows
@@ -99,7 +98,6 @@
                 enableGroundShadow: true,
                 groundYBias: 1
             });
-            var defaultBuddyColor
 
             BABYLON.SceneLoader.ImportMesh(null, "./scenes/", "subway (with modifiers).obj", scene, function(newMeshes) {
                 for (var i = 0; i < newMeshes.length; i++) {
@@ -136,17 +134,17 @@
 
                 buddy1.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI)
                 buddy1.receiveShadows = true;
-
                 for (var i = 0; i < x_vals.length; i++) {
                     var newBuddy = buddy1.clone("buddy" + i);
                     newBuddy.position.x = x_vals[i];
                     newBuddy.position.y = y_vals;
                     newBuddy.position.z = z_vals[i];
-                    newBuddy.material = new BABYLON.StandardMaterial()
                     if (i < 4)
                         newBuddy.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
 
                 }
+                // buddy1.setEnabled(false)
+
                 // var frameRate = 10
 
                 // var xSlide = new BABYLON.Animation("xSlide", "position.x", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
@@ -170,10 +168,46 @@
                 // xSlide.setKeys(keyFrames);
 
                 // scene.beginDirectAnimation(buddy1, [xSlide], 0, 2 * frameRate, true);
-
             });
+            var hl = new BABYLON.HighlightLayer("hl1", scene);
+            hl.innerGlow = true
+            hl.outerGlow = false
+            var color = 0
+            var OnKillClicked = function onKillClicked() {
 
-            // Set UI Control panel
+                    if (selectedMesh != null) {
+                        console.log("eliminated")
+
+                        // selectedMesh.material = new BABYLON.StandardMaterial()
+                        // selectedMesh.visibility = 0.25
+                        var newColor
+                        switch (color) {
+                            case 0:
+                                newColor = BABYLON.Color3.Red()
+                                break;
+                            case 1:
+                                newColor = BABYLON.Color3.Green()
+                                break;
+                            case 2:
+                                newColor = BABYLON.Color3.Blue()
+                                break;
+                            case 3:
+                                newColor = BABYLON.Color3.Yellow()
+                                break;
+                            case 4:
+                                newColor = BABYLON.Color3.Purple()
+                                break;
+
+                        }
+                        hl.addMesh(selectedMesh, newColor);
+
+                        color = (color + 1) % 5
+                            // selectedMesh.material.diffuseColor = newColor
+                        selectedMesh.renderOutline = false
+                        selectedMesh = null
+                    }
+                }
+                // Set UI Control panel
             var guiManager = new BABYLON.GUI.GUI3DManager(scene);
             var guiPanel = new BABYLON.GUI.StackPanel3D();
             guiPanel.margin = 0.02;
@@ -194,6 +228,8 @@
             // play button
             let pass = new BABYLON.GUI.HolographicButton("Do Nothing");
             guiPanel.addControl(pass);
+            kill.onPointerUpObservable.add(OnKillClicked);
+
 
             //// add text
             // follow
@@ -246,6 +282,7 @@
                 }
             }
 
+
             // Move the light with the camera
             scene.registerBeforeRender(function() {
                 // light.position = camera.position;
@@ -260,7 +297,9 @@
             vrHelper.displayLaserPointer = true
             vrHelper.deviceOrientationCamera.disablePointerInputWhenUsingDeviceOrientation = false;
 
-            // vrHelper.enableTeleportation({floorMeshes: [enviroment.ground]});
+            vrHelper.enableTeleportation({
+                floorMeshes: [enviroment.ground]
+            });
             return scene;
         };
         /******* End of the create scene function ******/
