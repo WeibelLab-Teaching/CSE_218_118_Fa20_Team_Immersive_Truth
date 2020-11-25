@@ -1,10 +1,9 @@
 export interface Player {
-  name: string;
+  username: string;
   socketId: string;
 }
 
 export interface Room {
-  host: Player;
   players: Player[];
   config: RoomConfig;
 }
@@ -19,7 +18,7 @@ export interface RoomConfig {
 export interface NewRoomPayload {
   config: RoomConfig;
   roomId: string;
-  hostname: string;
+  username: string;
 }
 
 export interface JoinRoomPayload {
