@@ -23,10 +23,10 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const router = useRouter();
-    const name = ref<HTMLInputElement>(null);
+    const name = ref<HTMLInputElement | null>(null);
 
     function enterGame() {
-      store.commit('setName', name.value.innerHTML);
+      store.commit('setName', name.value?.innerHTML);
       // TODO: enter game
     }
 
