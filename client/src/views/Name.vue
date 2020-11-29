@@ -28,6 +28,7 @@ export default defineComponent({
     function enterGame() {
       store.commit('setName', name.value?.innerHTML);
       // TODO: enter game
+      router.push('/gameRoom');
     }
 
     return {
