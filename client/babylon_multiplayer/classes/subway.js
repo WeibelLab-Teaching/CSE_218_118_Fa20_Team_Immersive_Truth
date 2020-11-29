@@ -36,15 +36,6 @@ export default class Subway {
 
         subwaylight.intensity = 3;
 
-        // Setup shadows
-        var shadowGenerator = new BABYLON.ShadowGenerator(1024, subwaylight);
-        shadowGenerator.useBlurExponentialShadowMap = true;
-        shadowGenerator.useKernelBlur = true;
-        shadowGenerator.blurKernel = 64;
-        var shadowGenerator2 = new BABYLON.ShadowGenerator(1024, subwaylight2);
-        shadowGenerator2.useBlurExponentialShadowMap = true;
-        shadowGenerator2.useKernelBlur = true;
-        shadowGenerator2.blurKernel = 64;
 
         BABYLON.SceneLoader.ImportMesh(
             null,
@@ -58,8 +49,8 @@ export default class Subway {
                     newMeshes[i].position.z = -1;
                     newMeshes[i].scaling = new BABYLON.Vector3(4, 2, 2);
                     newMeshes[i].rotate(new BABYLON.Vector3(0, 1, 0), -3.141592 / 2);
-                    shadowGenerator.getShadowMap().renderList.push(newMeshes[i]);
-                    newMeshes[i].receiveShadows = true;
+                    //shadowGenerator.getShadowMap().renderList.push(newMeshes[i]);
+                    //newMeshes[i].receiveShadows = true;
                 }
             }
         );
