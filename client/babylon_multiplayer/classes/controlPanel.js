@@ -6,55 +6,56 @@ import GUI from 'babylonjs-gui';
 import 'babylonjs-loaders';
 
 export default class ControlPanel {
-    constructor(playerMesh, username) {
+    constructor(playerMesh, username, scene) {
+        this.scene = scene
         this.playerMesh = playerMesh;
         this.create();
     }
 
-    create(){
-        var hl = new BABYLON.HighlightLayer("hl1", Subway.scene);
+    create() {
+        var hl = new BABYLON.HighlightLayer("hl1", this.scene);
         hl.innerGlow = true;
         hl.outerGlow = false;
         var color = 0;
         var OnKillClicked = function onKillClicked() {
-          if (selectedMesh != null) {
-            console.log("eliminated");
+            if (selectedMesh != null && selectedMesh.name.includes('player')) {
+                console.log("eliminated");
 
-            selectedMesh.material = new BABYLON.StandardMaterial();
-            selectedMesh.visibility = 0.25;
-            var newColor;
-            switch (color) {
-              case 0:
-                newColor = BABYLON.Color3.Red();
-                break;
-              case 1:
-                newColor = BABYLON.Color3.Green();
-                break;
-              case 2:
-                newColor = BABYLON.Color3.Blue();
-                break;
-              case 3:
-                newColor = BABYLON.Color3.Yellow();
-                break;
-              case 4:
-                newColor = BABYLON.Color3.Purple();
-                break;
+                selectedMesh.material = new BABYLON.StandardMaterial();
+                selectedMesh.visibility = 0.25;
+                var newColor;
+                switch (color) {
+                    case 0:
+                        newColor = BABYLON.Color3.Red();
+                        break;
+                    case 1:
+                        newColor = BABYLON.Color3.Green();
+                        break;
+                    case 2:
+                        newColor = BABYLON.Color3.Blue();
+                        break;
+                    case 3:
+                        newColor = BABYLON.Color3.Yellow();
+                        break;
+                    case 4:
+                        newColor = BABYLON.Color3.Purple();
+                        break;
+                }
+                hl.addMesh(selectedMesh, newColor);
+
+                color = (color + 1) % 5;
+                selectedMesh.material.diffuseColor = newColor;
+                selectedMesh.renderOutline = false;
+                selectedMesh = null;
             }
-            hl.addMesh(selectedMesh, newColor);
-
-            color = (color + 1) % 5;
-            selectedMesh.material.diffuseColor = newColor;
-            selectedMesh.renderOutline = false;
-            selectedMesh = null;
-          }
         };
 
         // Set UI Control panel
-        var guiManager = new GUI.GUI3DManager(Subway.scene);
+        var guiManager = new GUI.GUI3DManager(this.scene);
         var guiPanel = new GUI.StackPanel3D();
         guiPanel.margin = 0.02;
         guiManager.addControl(guiPanel);
-        guiPanel.linkToTransformNode(Subway.scene.activeCamera);
+        guiPanel.linkToTransformNode(this.scene.activeCamera);
         guiPanel.node.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
         guiPanel.position.z = 3;
         guiPanel.position.y = -1;
@@ -92,27 +93,27 @@ export default class ControlPanel {
         playText.fontSize = 30;
         pass.content = playText;
 
-    var selectedMesh;
+        var selectedMesh;
 
-    Subway.scene.onPointerObservable.add((pointerInfo) => {
-        switch (pointerInfo.type) {
-        case BABYLON.PointerEventTypes.POINTERDOWN:
-            if (
-            pointerInfo.pickInfo.hit &&
-            pointerInfo.pickInfo.pickedMesh != Subway.ground
-            ) {
-            console.log("clicked something");
-            var selected = pointerInfo.pickInfo.pickedMesh;
+        this.scene.onPointerObservable.add((pointerInfo) => {
+            switch (pointerInfo.type) {
+                case BABYLON.PointerEventTypes.POINTERDOWN:
+                    if (
+                        pointerInfo.pickInfo.hit &&
+                        pointerInfo.pickInfo.pickedMesh != this.ground
+                    ) {
+                        console.log("clicked something");
+                        var selected = pointerInfo.pickInfo.pickedMesh;
 
-            if (selected === this.playerMesh)
-                selected.renderOutline = true;
-            if (selectedMesh != null && selected != selectedMesh) {
-                selectedMesh.renderOutline = false;
+                        if (selected === this.playerMesh)
+                            selected.renderOutline = true;
+                        if (selectedMesh != null && selected != selectedMesh) {
+                            selectedMesh.renderOutline = false;
+                        }
+                        selectedMesh = selected;
+                    }
+                    break;
             }
-            selectedMesh = selected;
-            }
-            break;
-        }
-    });
+        });
     }
 }

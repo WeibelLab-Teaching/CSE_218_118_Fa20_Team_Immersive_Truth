@@ -26,7 +26,7 @@ export default defineComponent({
     const name = ref<HTMLInputElement | null>(null);
 
     function enterGame() {
-      store.commit('setName', name.value?.innerHTML);
+      store.commit('setName', name.value?.value);
       // TODO: enter game
       router.push('/gameRoom');
     }

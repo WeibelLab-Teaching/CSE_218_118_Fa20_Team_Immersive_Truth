@@ -1,45 +1,42 @@
 /* global BABYLON */
 /* global World */
-import Subway from './subway.js';
 import Billboard from './billboard.js';
 import BABYLON from 'babylonjs';
 import ControlPanel from './controlPanel.js';
 import 'babylonjs-loaders';
-import GUI from 'babylonjs-gui';
-
 
 export default class Player {
 
-    constructor(id, username) {
+    constructor(id, username, position, scene) {
         this.id = id;
-
-        BABYLON.SceneLoader.ImportMesh("", "src/assets/scenes/", "player_clothed.obj", Subway.scene, function (newMeshes, particleSystems, skeletons) {
+        this.role = 'mafia'
+        this.name = username
+        this.mesh = null
+        BABYLON.SceneLoader.ImportMesh("", "src/assets/scenes/", "player_clothed.obj", scene, function(newMeshes, particleSystems, skeletons) {
             //Locations of players
-            var x_vals = [11.6, 10, 8.5, 7, 11.6, 8.5, 7];
-            var y_vals = -0.6;
-            var z_vals = [-4.7, -4.7, -4.7, -4.7, 2.6, 2.6, 2.6];
-            var z_vals = [2.6, 2.6, 2.6, -4.7, -4.7, -4.7, -4.7,];
+            var x_val = position;
+            var y_val = -0.6;
+            var z_val = id > 4 ? -4.7 : 2.6;
 
             var Avatar = newMeshes[0];
-            Avatar.name = username;
+            Avatar.name = "player" + id;
             Avatar.scaling = new BABYLON.Vector3(0.22, 0.22, 0.22);
             Avatar.outlineWidth = 0.1;
             Avatar.outlineColor = new BABYLON.Color4(1, 0.2, 0.3, 1.0);
 
             Avatar.renderOutline = false;
-            
 
             // Avatar 1 location and shadows
-            Avatar.position.x = x_vals[parseInt(id)];
-            Avatar.position.y = -0.6;
-            Avatar.position.z = z_vals[parseInt(id)];
+            Avatar.position.x = x_val;
+            Avatar.position.y = y_val;
+            Avatar.position.z = z_val;
 
             Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
             Avatar.receiveShadows = true;
             new Billboard(Avatar, username);
-            new ControlPanel(Avatar);
-
+            new ControlPanel(Avatar, 'name', scene);
         });
+
         Player.all.push(this);
     }
 
@@ -63,7 +60,7 @@ export default class Player {
     }
 
     static init() {
-        Player.material = new BABYLON.StandardMaterial("matPlayer", Subway.scene);
+        Player.material = new BABYLON.StandardMaterial("matPlayer", scene);
         Player.material.diffuseColor = new BABYLON.Color3.Red();
     }
 
