@@ -32,38 +32,55 @@ export default class Subway {
             this.scene
         );
 
-        subwaylight.intensity = .8;
+        subwaylight.intensity = .7;
         subwaylight2.intensity = .5;
-        // var mySphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {
-        //     diameter: 1
-        // }, this.scene);
-        // mySphere.position.y = 1.5;
-        // mySphere.position.x = 7;
-        // mySphere.material = new BABYLON.StandardMaterial()
-        // mySphere.material.diffuseColor = new BABYLON.Color3.Red()
-        var shadowGenerator = new BABYLON.ShadowGenerator(1024, subwaylight);
-        shadowGenerator.useBlurExponentialShadowMap = true;
-        shadowGenerator.useKernelBlur = true;
-        shadowGenerator.blurKernel = 64;
-        var shadowGenerator2 = new BABYLON.ShadowGenerator(1024, subwaylight2);
-        shadowGenerator2.useBlurExponentialShadowMap = true;
-        shadowGenerator2.useKernelBlur = true;
-        shadowGenerator2.blurKernel = 64;
+
+        subwaylight.diffuse = BABYLON.Color3.White()
+            // var mySphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {
+            //     diameter: 1
+            // }, this.scene);
+            // mySphere.position.y = 1.5;
+            // mySphere.position.x = 7;
+            // mySphere.material = new BABYLON.StandardMaterial()
+            // mySphere.material.diffuseColor = new BABYLON.Color3.Red()
+            // var shadowGenerator = new BABYLON.ShadowGenerator(1024, subwaylight);
+            // shadowGenerator.useBlurExponentialShadowMap = true;
+            // shadowGenerator.useKernelBlur = true;
+            // shadowGenerator.blurKernel = 64;
+            // var shadowGenerator2 = new BABYLON.ShadowGenerator(1024, subwaylight2);
+            // shadowGenerator2.useBlurExponentialShadowMap = true;
+            // shadowGenerator2.useKernelBlur = true;
+            // shadowGenerator2.blurKernel = 64;
+        var gl = new BABYLON.GlowLayer("glow", this.scene);
+
         BABYLON.SceneLoader.ImportMesh(
             null,
             "src/assets/scenes/",
-            "subwayV2.obj",
+            "subway.obj",
             this.scene,
             function(newMeshes) {
                 for (var i = 0; i < newMeshes.length; i++) {
+                    console.log(newMeshes[i].name)
                     newMeshes[i].position.x = 0;
                     newMeshes[i].position.y = 0.001;
                     newMeshes[i].position.z = -1;
                     newMeshes[i].scaling = new BABYLON.Vector3(4, 2, 2);
                     newMeshes[i].rotate(new BABYLON.Vector3(0, 1, 0), -3.141592 / 2);
                     // shadowGenerator.getShadowMap().renderList.push(newMeshes[i]);
-                    newMeshes[i].receiveShadows = true;
+                    newMeshes[i].receiveShadows = false;
                 }
+
+                var lightsMesh = newMeshes[3]
+                lightsMesh.material = new BABYLON.StandardMaterial()
+                lightsMesh.material.emissiveColor = new BABYLON.Color3(.5, .4, .2)
+                gl.addIncludedOnlyMesh(lightsMesh)
+                gl.intensity = .8
+                var metalMesh1 = newMeshes[2]
+                metalMesh1.material = new BABYLON.PBRMetallicRoughnessMaterial("pbr1", this.scene)
+                var metalMesh2 = newMeshes[4]
+                metalMesh2.material = new BABYLON.PBRMetallicRoughnessMaterial("pbr2", this.scene)
+                var metalMesh3 = newMeshes[5]
+                metalMesh3.material = new BABYLON.PBRMetallicRoughnessMaterial("pbr3", this.scene)
             }
         );
     }
