@@ -59,7 +59,7 @@ export default class Subway {
                     newMeshes[i].position.x = 0;
                     newMeshes[i].position.y = 0.001;
                     newMeshes[i].position.z = -1;
-                    newMeshes[i].scaling = new BABYLON.Vector3(4, 2, 2);
+                    newMeshes[i].scaling = new BABYLON.Vector3(3, 2, 2);
                     newMeshes[i].rotate(new BABYLON.Vector3(0, 1, 0), -3.141592 / 2);
                     // shadowGenerator.getShadowMap().renderList.push(newMeshes[i]);
                     newMeshes[i].receiveShadows = true;
