@@ -7,6 +7,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "babylonjs": "^4.2.0",
     "babylonjs-gui": "^4.2.0",
     "babylonjs-loaders": "^4.2.0",
