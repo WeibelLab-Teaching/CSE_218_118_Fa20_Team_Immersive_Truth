@@ -5,9 +5,9 @@ import 'babylonjs-loaders';
 import Player from './player';
 import Subway from './subway';
 export default class Game {
-  constructor(num_players, player_names) {
+  constructor(num_players, player_names, target) {
     console.log(player_names);
-    this.canvas = document.getElementById('renderCanvas');
+    this.canvas = target;
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = new BABYLON.Scene(this.engine);
     this.subway = new Subway(this.scene);
