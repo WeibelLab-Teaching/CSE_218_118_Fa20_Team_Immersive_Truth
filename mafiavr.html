@@ -36,6 +36,11 @@
     <!-- touch-action="none" for best results from PEP -->
 
     <script>
+        var ApplicationState = {
+            day: true,
+            mafia: false,
+
+        }
         var canvas = document.getElementById("renderCanvas");
         var engine = null;
         var scene = null;
@@ -174,12 +179,11 @@
             hl.outerGlow = false
             var color = 0
             var OnKillClicked = function onKillClicked() {
-
                     if (selectedMesh != null) {
                         console.log("eliminated")
 
-                        // selectedMesh.material = new BABYLON.StandardMaterial()
-                        // selectedMesh.visibility = 0.25
+                        selectedMesh.material = new BABYLON.StandardMaterial()
+                        selectedMesh.visibility = 0.25
                         var newColor
                         switch (color) {
                             case 0:
@@ -199,10 +203,10 @@
                                 break;
 
                         }
-                        hl.addMesh(selectedMesh, newColor);
+                        hl.addMesh(selectedMesh, new BABYLON.Color3.Black());
 
                         color = (color + 1) % 5
-                            // selectedMesh.material.diffuseColor = newColor
+                        selectedMesh.material.diffuseColor = newColor
                         selectedMesh.renderOutline = false
                         selectedMesh = null
                     }
@@ -220,10 +224,10 @@
 
             //// add buttons
             // follow / walking mode button
-            let kill = new BABYLON.GUI.HolographicButton("Kill them");
+            let kill = new BABYLON.GUI.HolographicButton("Kill");
             guiPanel.addControl(kill);
             // change environment button
-            let save = new BABYLON.GUI.HolographicButton("Save them");
+            let save = new BABYLON.GUI.HolographicButton("Save");
             guiPanel.addControl(save);
             // play button
             let pass = new BABYLON.GUI.HolographicButton("Do Nothing");
@@ -232,24 +236,21 @@
 
 
             //// add text
-            // follow
-            let toggleFollowText = new BABYLON.GUI.TextBlock();
-            toggleFollowText.text = "Kill Them";
-            toggleFollowText.color = "white";
-            toggleFollowText.fontSize = 30;
-            kill.content = toggleFollowText;
-            // environment
-            let envText = new BABYLON.GUI.TextBlock();
-            envText.text = "Save Them";
-            envText.color = "white";
-            envText.fontSize = 30;
-            save.content = envText;
-            // play
-            let playText = new BABYLON.GUI.TextBlock();
-            playText.text = "Do Nothing";
-            playText.color = "white";
-            playText.fontSize = 30;
-            pass.content = playText;
+            var killText = new BABYLON.GUI.TextBlock();
+            killText.text = "Kill";
+            killText.color = "Red";
+            killText.fontSize = 50;
+            kill.content = killText;
+
+            let saveText = new BABYLON.GUI.TextBlock();
+            saveText.text = "Save";
+            saveText.fontSize = 50;
+            save.content = saveText;
+
+            let passText = new BABYLON.GUI.TextBlock();
+            passText.text = "Do Nothing";
+            passText.fontSize = 40;
+            pass.content = passText;
 
 
             var selectedMesh
