@@ -1,41 +1,43 @@
 <template>
-  <div>
+  <div class="game-room">
+    <canvas ref="canvas" class="canvas"></canvas>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
-import Subway from "../../babylon_multiplayer/classes/subway.js"
-import Avatar from "../../babylon_multiplayer/classes/avatar.js"
-import Billboard from "../../babylon_multiplayer/classes/billboard.js"
-import Player from "../../babylon_multiplayer/classes/player.js"
+import { onMounted, ref } from 'vue';
 import { useStore } from '../store';
-import { computed } from 'vue';
-import Game from '../../babylon_multiplayer/classes/game.js'
+import Game from '../../babylon_multiplayer/classes/game.js';
 
 export default {
-  
+  name: 'GameRoom',
   setup() {
-    const store = useStore()
-    var game = new Game(2, ['charlie', 'gamma'])
-    game.render()
-  }
+    const store = useStore();
+    const canvas = ref(null);
+
+    onMounted(() => {
+      var game = new Game(2, ['charlie', 'gamma'], canvas.value);
+      game.render();
+    });
+
+    return {
+      canvas,
+    };
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-html,
-body {
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
+@import '../scss/mixins.scss';
 
-#renderCanvas {
-  width: 100%;
-  height: 100%;
+.canvas {
   touch-action: none;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: -webkit-fill-available;
+  height: -webkit-fill-available;
+  width: 100vw;
 }
 </style>

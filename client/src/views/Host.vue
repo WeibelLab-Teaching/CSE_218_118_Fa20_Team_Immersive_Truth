@@ -85,6 +85,7 @@ export default defineComponent({
   width: 100%;
 
   .button {
+    cursor: pointer;
     border: none;
     outline: none;
     background: none;
