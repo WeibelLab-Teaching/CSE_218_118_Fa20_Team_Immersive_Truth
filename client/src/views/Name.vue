@@ -26,6 +26,11 @@ export default defineComponent({
     const name = ref<HTMLInputElement | null>(null);
 
     function enterGame() {
+      // check name value
+      if (name.value.value.length === 0) {
+        return alert('Please enter a valid username.');
+      }
+
       store.commit('setName', name.value?.value);
       // TODO: enter game
       router.push('/gameRoom');

@@ -1,9 +1,8 @@
 import { Server, Socket } from 'socket.io';
 import chalk from 'chalk';
-import { JoinRoomPayload, NewRoomPayload, Rooms } from './types';
+import { JoinRoomPayload, NewRoomPayload } from './types';
+import { rooms } from '../database';
 
-// Since our game is relatively simple, I just use an object as a db instance.
-const rooms: Rooms = {};
 const userToRoom = new Map<string, string>();
 
 export function setupSocketIO(io: Server): void {
