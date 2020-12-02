@@ -19,6 +19,6 @@ export default createRouter({
     { path: '/host', component: Host },
     { path: '/name', component: Name },
     { path: '/config', component: Config },
-    { path: '/gameRoom', component: GameRoom},
+    { path: '/gameRoom', component: GameRoom },
   ],
 });
