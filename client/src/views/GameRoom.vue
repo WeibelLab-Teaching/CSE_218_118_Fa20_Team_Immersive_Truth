@@ -24,9 +24,11 @@ export default {
     const isHost = store.state.host;
     const username = store.state.name;
     const roomId = store.state.roomId;
+    const num_villagers = store.state.villagers;
+    const num_mafia = store.state.mafias;
 
     onMounted(() => {
-      var game = new Game(2, ['charlie', 'gamma'], canvas.value);
+      var game = new Game(num_villagers, num_mafia, ['charlie', store.state.name, 'gamma', 'alpha', 'delta'], canvas.value);
       game.render();
     });
 

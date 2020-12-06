@@ -6,11 +6,12 @@ import ControlPanel from './controlPanel.js';
 import 'babylonjs-loaders';
 
 export default class Player {
-  constructor(id, username, position, scene) {
+  constructor(id, username, position, role, scene) {
     this.id = id;
-    this.role = 'mafia';
+    this.role = role;
     this.name = username;
     this.mesh = null;
+    this.scene = scene;
     BABYLON.SceneLoader.ImportMesh(
       '',
       'src/assets/scenes/',
@@ -30,6 +31,11 @@ export default class Player {
 
         Avatar.renderOutline = false;
 
+        if(role == 'mafia'){
+          Avatar.renderOutline = true
+          Avatar.outlineColor = new BABYLON.Color3.Red()
+        }
+
         // Avatar 1 location and shadows
         Avatar.position.x = x_val;
         Avatar.position.y = y_val;
@@ -41,7 +47,6 @@ export default class Player {
         new ControlPanel(Avatar, 'name', scene);
       }
     );
-
     Player.all.push(this);
   }
 

@@ -52,7 +52,7 @@ export default class Subway {
     // shadowGenerator2.useKernelBlur = true;
     // shadowGenerator2.blurKernel = 64;
     var gl = new BABYLON.GlowLayer('glow', this.scene);
-
+    var scene = this.scene
     BABYLON.SceneLoader.ImportMesh(
       null,
       'src/assets/scenes/',
@@ -78,17 +78,17 @@ export default class Subway {
         var metalMesh1 = newMeshes[2];
         metalMesh1.material = new BABYLON.PBRMetallicRoughnessMaterial(
           'pbr1',
-          this.scene
+          scene
         );
         var metalMesh2 = newMeshes[4];
         metalMesh2.material = new BABYLON.PBRMetallicRoughnessMaterial(
           'pbr2',
-          this.scene
+          scene
         );
         var metalMesh3 = newMeshes[5];
         metalMesh3.material = new BABYLON.PBRMetallicRoughnessMaterial(
           'pbr3',
-          this.scene
+          scene
         );
       }
     );
