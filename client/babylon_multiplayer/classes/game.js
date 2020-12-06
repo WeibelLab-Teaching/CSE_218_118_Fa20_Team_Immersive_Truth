@@ -5,25 +5,35 @@ import 'babylonjs-loaders';
 import Player from './player';
 import Subway from './subway';
 export default class Game {
-  constructor(num_players, player_names, target) {
+  constructor(villagers, mafias, player_names, target) {
     console.log(player_names);
     this.canvas = target;
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = new BABYLON.Scene(this.engine);
     this.subway = new Subway(this.scene);
-    this.player0 = new Player(
-      0,
-      player_names[0],
-      this.subway.positions[0],
-      this.scene
-    );
-    this.player1 = new Player(
-      1,
-      player_names[1],
-      this.subway.positions[1],
-      this.scene
-    );
-    this.num_players = num_players;
+    this.players = []
+    let villager_ctr = 0
+    let mafia_ctr = 0
+    this.num_players = villagers + mafias;
+
+    for(var i = 0; i < this.num_players; i++) {
+      var role = 'mafia'
+      if(villager_ctr < villagers && (Math.random() > 0.5 || mafia_ctr == mafias)){
+        role = 'villager'
+        villager_ctr++;
+      }
+      else{
+        mafia_ctr++;
+      }
+      this.players[i] = new Player(
+        i,
+        player_names[i] ? player_names[i] : "null",
+        this.subway.positions[i],
+        role,
+        this.scene
+      );
+    }
+
     this.camera = this.setupCamera();
 
     // This attaches the camera to the canvas
