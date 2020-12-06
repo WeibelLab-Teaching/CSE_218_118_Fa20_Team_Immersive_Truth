@@ -1,2 +1,2 @@
 // express server url
-export const serverURL = 'http://localhost:9999';
+export const serverURL = 'https://mafia-vr.herokuapp.com';

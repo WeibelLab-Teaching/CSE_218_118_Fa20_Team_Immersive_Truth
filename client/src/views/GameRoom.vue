@@ -28,7 +28,12 @@ export default {
     const num_mafia = store.state.mafias;
 
     onMounted(() => {
-      var game = new Game(num_villagers, num_mafia, ['charlie', store.state.name, 'gamma', 'alpha', 'delta'], canvas.value);
+      var game = new Game(
+        num_villagers,
+        num_mafia,
+        ['charlie', store.state.name, 'gamma', 'alpha', 'delta'],
+        canvas.value
+      );
       game.render();
     });
 
