@@ -14,6 +14,14 @@ export function setupSocketIO(io: Server): void {
         players: [{ username, socketId: socket.id }],
         config,
       };
+      console.log(
+        chalk.blue(
+          `New room ${`(${chalk.yellow(
+            roomId
+          )})`} with the following config has been created: `
+        )
+      );
+      console.log(rooms[roomId]);
     });
 
     // player join a room
@@ -42,15 +50,15 @@ export function setupSocketIO(io: Server): void {
       }
     });
 
-    socket.on('offer', ({ id, message }) => {
+    socket.on('offer', (id, message) => {
       socket.to(id).emit('offer', { socketId: socket.id, message });
     });
 
-    socket.on('answer', ({ id, message }) => {
+    socket.on('answer', (id, message) => {
       socket.to(id).emit('answer', { socketId: socket.id, message });
     });
 
-    socket.on('candidate', ({ id, message }) => {
+    socket.on('candidate', (id, message) => {
       socket.to(id).emit('candidate', { socketId: socket.id, message });
     });
 
@@ -66,6 +74,7 @@ export function setupSocketIO(io: Server): void {
         players.splice(userIndex, 1);
 
         // 2. notifies all participants
+        console.log(chalk.red(`player ${socket.id} has disconnected.`));
         for (const player of players) {
           socket.to(player.socketId).emit('player disconnected', {
             username: disconnectedPlayer.username,

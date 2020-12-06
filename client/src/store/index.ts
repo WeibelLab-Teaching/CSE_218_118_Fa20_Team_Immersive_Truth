@@ -9,6 +9,7 @@ export interface State {
   mafias: number;
   sheriffs: number;
   doctors: number;
+  host: boolean;
 }
 
 export const key: InjectionKey<Store<State>> = Symbol();
@@ -23,6 +24,7 @@ export const store = createStore<State>({
       mafias: 1,
       sheriffs: 1,
       doctors: 1,
+      host: false,
     };
   },
   mutations: {
@@ -46,6 +48,9 @@ export const store = createStore<State>({
     },
     setDoctors(state, doctors: number) {
       state.doctors = doctors;
+    },
+    setHost(state, host: boolean) {
+      state.host = host;
     },
   },
 });
