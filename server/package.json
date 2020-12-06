@@ -3,9 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "15.0.1"
+  },
   "scripts": {
     "build": "tsc -p .",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts"
+    "postinstall": "npm run build",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec \"ts-node -r dotenv/config\" src/index.ts",
+    "start": "node lib/index.js",
+    "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +34,7 @@
     "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "socket.io": "^3.0.3"
   }

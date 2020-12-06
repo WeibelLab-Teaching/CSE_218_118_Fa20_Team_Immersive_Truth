@@ -12,7 +12,7 @@ import { useStore } from '../store';
 import Game from '../../babylon_multiplayer/classes/game.js';
 import { serverURL } from '../config';
 
-const Manager = window.io.Manager;
+const Manager = (window as any).io.Manager;
 
 export default {
   name: 'GameRoom',
