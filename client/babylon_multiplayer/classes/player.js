@@ -6,12 +6,13 @@ import ControlPanel from './controlPanel.js';
 import 'babylonjs-loaders';
 
 export default class Player {
-  constructor(id, username, position, role, scene) {
+  constructor(id, selfid, username, position, role, scene) {
     this.id = id;
     this.role = role;
     this.name = username;
     this.mesh = null;
     this.scene = scene;
+    console.log("ROLE:" + id)
     BABYLON.SceneLoader.ImportMesh(
       '',
       'src/assets/scenes/',
@@ -21,19 +22,19 @@ export default class Player {
         //Locations of players
         var x_val = position;
         var y_val = -0.6;
-        var z_val = id > 4 ? -4.7 : 2.6;
+        var z_val = id > 2 ? -4.7 : 2.6;
 
         var Avatar = newMeshes[0];
         Avatar.name = 'player' + id;
         Avatar.scaling = new BABYLON.Vector3(0.22, 0.22, 0.22);
         Avatar.outlineWidth = 0.1;
-        Avatar.outlineColor = new BABYLON.Color4(1, 0.2, 0.3, 1.0);
+        Avatar.outlineColor = new BABYLON.Color3(1, 0.2, 0.3);
 
         Avatar.renderOutline = false;
 
         if(role == 'mafia'){
           Avatar.renderOutline = true
-          Avatar.outlineColor = new BABYLON.Color3.Red()
+          Avatar.outlineColor = new BABYLON.Color3.Blue()
         }
 
         // Avatar 1 location and shadows
@@ -41,10 +42,12 @@ export default class Player {
         Avatar.position.y = y_val;
         Avatar.position.z = z_val;
 
-        Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
+        if (id < 3)
+          Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
         Avatar.receiveShadows = true;
         new Billboard(Avatar, username);
-        new ControlPanel(Avatar, 'name', scene);
+        if(selfid == id)
+          new ControlPanel(Avatar, role, scene);
       }
     );
     Player.all.push(this);

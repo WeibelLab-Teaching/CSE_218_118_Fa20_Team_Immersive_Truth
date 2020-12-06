@@ -1,6 +1,4 @@
-/* global Avatar */
 /* global BABYLON */
-import Avatar from './avatar.js';
 import BABYLON from 'babylonjs';
 import 'babylonjs-loaders';
 
@@ -8,7 +6,7 @@ export default class Subway {
   constructor(scene) {
     this.scene = scene;
 
-    this.positions = [11.6, 10, 8.5, 7, 11.6, 8.5, 7];
+    this.positions = [11.6, 10, 8.5, 11.6, 8.5, 7, 7];
 
     // setupGround();
     this.setupSubway();

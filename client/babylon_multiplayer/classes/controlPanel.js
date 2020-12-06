@@ -6,9 +6,10 @@ import GUI from 'babylonjs-gui';
 import 'babylonjs-loaders';
 
 export default class ControlPanel {
-  constructor(playerMesh, username, scene) {
+  constructor(playerMesh, role, scene) {
     this.scene = scene;
     this.playerMesh = playerMesh;
+    this.role = role;
     this.create();
   }
 
@@ -17,9 +18,17 @@ export default class ControlPanel {
     hl.innerGlow = true;
     hl.outerGlow = false;
     var color = 0;
-    var OnKillClicked = function onKillClicked() {
+    
+    function OnVoteClicked(){
+      if (selectedMesh != null && selectedMesh.name.includes('player')){
+        console.log("Voted for " + selectedMesh.name)
+      }
+    }
+
+
+    function OnKillClicked() {
       if (selectedMesh != null && selectedMesh.name.includes('player')) {
-        console.log('eliminated');
+        console.log(selectedMesh.name + ' has been eliminated');
 
         selectedMesh.material = new BABYLON.StandardMaterial();
         selectedMesh.visibility = 0.25;
@@ -63,35 +72,39 @@ export default class ControlPanel {
 
     //// add buttons
     // follow / walking mode button
-    let kill = new GUI.HolographicButton('Kill them');
-    guiPanel.addControl(kill);
-    // change environment button
-    let save = new GUI.HolographicButton('Save them');
-    guiPanel.addControl(save);
-    // play button
-    let pass = new GUI.HolographicButton('Do Nothing');
-    guiPanel.addControl(pass);
-    kill.onPointerUpObservable.add(OnKillClicked);
+    if(this.role == 'mafia'){
+      let kill = new GUI.HolographicButton('Kill them');
+      guiPanel.addControl(kill);
+    
+      var killText = new GUI.TextBlock();
+      killText.text = 'Kill Them';
+      killText.color = 'white';
+      killText.fontSize = 30;
+      kill.content = killText;
 
-    //// add text
-    // follow
-    let toggleFollowText = new GUI.TextBlock();
-    toggleFollowText.text = 'Kill Them';
-    toggleFollowText.color = 'white';
-    toggleFollowText.fontSize = 30;
-    kill.content = toggleFollowText;
-    // environment
-    let envText = new GUI.TextBlock();
-    envText.text = 'Save Them';
-    envText.color = 'white';
-    envText.fontSize = 30;
-    save.content = envText;
+      kill.onPointerUpObservable.add(OnKillClicked);
+     
+    }
+    if(this.role == 'doctor'){
+      let save = new GUI.HolographicButton('Save them');
+      guiPanel.addControl(save);
+      let saveText = new GUI.TextBlock();
+      saveText.text = 'Save Them';
+      saveText.color = 'white';
+      saveText.fontSize = 30;
+      save.content = saveText;
+    }
+
+    let vote = new GUI.HolographicButton('Vote Out');
+    guiPanel.addControl(vote);
+
     // play
-    let playText = new GUI.TextBlock();
-    playText.text = 'Do Nothing';
-    playText.color = 'white';
-    playText.fontSize = 30;
-    pass.content = playText;
+    let voteText = new GUI.TextBlock();
+    voteText.text = 'Vote Out';
+    voteText.color = 'white';
+    voteText.fontSize = 30;
+    vote.content = voteText;
+    vote.onPointerUpObservable.add(OnVoteClicked);
 
     var selectedMesh;
 
@@ -102,10 +115,9 @@ export default class ControlPanel {
             pointerInfo.pickInfo.hit &&
             pointerInfo.pickInfo.pickedMesh != this.ground
           ) {
-            console.log('clicked something');
             var selected = pointerInfo.pickInfo.pickedMesh;
-
-            if (selected === this.playerMesh) selected.renderOutline = true;
+            if(selected != null && selected.name.includes('player'))
+              selected.renderOutline = true;
             if (selectedMesh != null && selected != selectedMesh) {
               selectedMesh.renderOutline = false;
             }

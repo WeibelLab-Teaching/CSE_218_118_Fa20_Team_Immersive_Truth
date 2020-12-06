@@ -47,7 +47,6 @@ export default class Billboard {
     this.text.text = this.username;
     this.mesh.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
     this.mesh.parent = this.playerMesh;
-    console.log('here');
   }
 }
 
