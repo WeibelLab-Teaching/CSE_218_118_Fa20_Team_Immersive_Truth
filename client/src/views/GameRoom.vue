@@ -26,14 +26,9 @@ export default {
     const roomId = store.state.roomId;
     const num_villagers = store.state.villagers;
     const num_mafia = store.state.mafias;
-
+    const selfid = 1;
     onMounted(() => {
-      var game = new Game(
-        num_villagers,
-        num_mafia,
-        ['charlie', store.state.name, 'gamma', 'alpha', 'delta'],
-        canvas.value
-      );
+      var game = new Game(selfid, num_villagers, num_mafia, ['charlie', store.state.name, 'gamma', 'alpha', 'delta'], canvas.value);
       game.render();
     });
 
