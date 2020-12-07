@@ -44,6 +44,11 @@ export default {
     const config = {
       iceServers: [
         {
+          urls: 'turn:54.175.38.118:3478',
+          credential: 'webrtc',
+          username: 'webrtc',
+        },
+        {
           urls: ['stun:stun.l.google.com:19302'],
         },
       ],
@@ -105,11 +110,13 @@ export default {
         }
       };
 
-      pc.createOffer()
-        .then((sdp) => pc.setLocalDescription(sdp))
-        .then(() => {
-          io.emit('offer', socketId, pc.localDescription);
-        });
+      pc.onnegotiationneeded = () => {
+        pc.createOffer()
+          .then((sdp) => pc.setLocalDescription(sdp))
+          .then(() => {
+            io.emit('offer', socketId, pc.localDescription);
+          });
+      };
     });
 
     io.on('offer', ({ socketId: id, message: description }) => {
