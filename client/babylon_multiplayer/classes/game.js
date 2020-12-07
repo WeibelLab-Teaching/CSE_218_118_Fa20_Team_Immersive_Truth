@@ -36,6 +36,11 @@ export default class Game {
     vrHelper.enableInteractions();
     vrHelper.touch = true;
     vrHelper.displayLaserPointer = true;
+    vrHelper.deviceOrientationCamera.disablePointerInputWhenUsingDeviceOrientation = false;
+
+    // vrHelper.enableTeleportation({
+    //   floorMeshes: [enviroment.ground],
+    // });
 
     //Resize event
     window.addEventListener('resize', () => {
