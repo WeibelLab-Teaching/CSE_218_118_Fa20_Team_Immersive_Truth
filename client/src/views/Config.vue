@@ -68,7 +68,7 @@ export default defineComponent({
 
     const villagers = computed({
       set(e) {
-        store.commit('setVillagers', e);
+        store.commit('setVillagers', +e);
       },
       get() {
         return store.state.villagers;
@@ -77,7 +77,7 @@ export default defineComponent({
 
     const mafias = computed({
       set(e) {
-        store.commit('setMafias', e);
+        store.commit('setMafias', +e);
       },
       get() {
         return store.state.mafias;
@@ -86,7 +86,7 @@ export default defineComponent({
 
     const sheriffs = computed({
       set(e) {
-        store.commit('setSheriffs', e);
+        store.commit('setSheriffs', +e);
       },
       get() {
         return store.state.sheriffs;
@@ -95,7 +95,7 @@ export default defineComponent({
 
     const doctors = computed({
       set(e) {
-        store.commit('setDoctors', e);
+        store.commit('setDoctors', +e);
       },
       get() {
         return store.state.doctors;
@@ -103,6 +103,7 @@ export default defineComponent({
     });
 
     function next() {
+      store.commit('setHost', true);
       router.push('/host');
     }
 

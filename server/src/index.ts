@@ -7,7 +7,7 @@ import { Server as SocketIO } from 'socket.io';
 import { setupSocketIO } from './socketio';
 import { rooms } from './database';
 
-const PORT = 9999;
+const PORT = process.env.PORT;
 
 const app = express();
 // express cors settings

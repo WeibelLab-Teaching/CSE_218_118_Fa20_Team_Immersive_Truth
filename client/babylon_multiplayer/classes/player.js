@@ -6,11 +6,14 @@ import ControlPanel from './controlPanel.js';
 import 'babylonjs-loaders';
 
 export default class Player {
-  constructor(id, username, position, scene) {
+  constructor(id, selfid, username, position, role, scene) {
     this.id = id;
-    this.role = 'mafia';
+    this.role = role;
     this.name = username;
     this.mesh = null;
+    this.votes = 0;
+    this.scene = scene;
+    console.log("ROLE:" + id)
     BABYLON.SceneLoader.ImportMesh(
       '',
       'src/assets/scenes/',
@@ -20,28 +23,36 @@ export default class Player {
         //Locations of players
         var x_val = position;
         var y_val = -0.6;
-        var z_val = id > 4 ? -4.7 : 2.6;
+        var z_val = id > 2 ? -4.7 : 2.6;
 
         var Avatar = newMeshes[0];
         Avatar.name = 'player' + id;
         Avatar.scaling = new BABYLON.Vector3(0.22, 0.22, 0.22);
         Avatar.outlineWidth = 0.1;
-        Avatar.outlineColor = new BABYLON.Color4(1, 0.2, 0.3, 1.0);
+        Avatar.outlineColor = new BABYLON.Color3(1, 0.2, 0.3);
 
         Avatar.renderOutline = false;
+
+        if (role == 'mafia') {
+          Avatar.renderOutline = true
+          Avatar.outlineColor = new BABYLON.Color3.Blue()
+        }
 
         // Avatar 1 location and shadows
         Avatar.position.x = x_val;
         Avatar.position.y = y_val;
         Avatar.position.z = z_val;
 
-        Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
+        if (id < 3)
+          Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
         Avatar.receiveShadows = true;
         new Billboard(Avatar, username);
-        new ControlPanel(Avatar, 'name', scene);
+        if (selfid == id)
+          new ControlPanel(Avatar, role, scene);
+
+        //this.mesh = Avatar;
       }
     );
-
     Player.all.push(this);
   }
 
@@ -101,6 +112,20 @@ export default class Player {
       -rotation,
       0
     );
+  }
+
+  static addVote(playerID) {
+    for (var objPlayer of Player.all) {
+      if (objPlayer.id === playerID) {
+        this.votes += 1;
+        break;
+      }
+    }
+
+    //Remove me from list of all players
+    Player.all = Player.all.filter((obj) => {
+      return obj.id !== playerID;
+    });
   }
 }
 
