@@ -1,6 +1,10 @@
 /* global Avatar */
 /* global Input */
 /* global Player */
+import BABYLON from 'babylonjs';
+import 'babylonjs-loaders';
+import Player from './player';
+import Subway from './subway';
 
 export default class Socket {
   static init(username) {

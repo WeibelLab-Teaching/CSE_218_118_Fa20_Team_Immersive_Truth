@@ -16,13 +16,13 @@ export default class Game {
     let mafia_ctr = 0
     this.num_players = villagers + mafias;
 
-    for(var i = 0; i < this.num_players; i++) {
+    for (var i = 0; i < this.num_players; i++) {
       var role = 'mafia'
-      if(villager_ctr < villagers && (Math.random() > 0.5 || mafia_ctr == mafias)){
+      if (villager_ctr < villagers && (Math.random() > 0.5 || mafia_ctr == mafias)) {
         role = 'villager'
         villager_ctr++;
       }
-      else{
+      else {
         mafia_ctr++;
       }
       this.players[i] = new Player(
@@ -44,6 +44,7 @@ export default class Game {
     //magic vr line
     var vrHelper = this.scene.createDefaultVRExperience({
       createDeviceOrientationCamera: true,
+      trackPosition: true,
     });
     vrHelper.enableInteractions();
     vrHelper.touch = true;
@@ -64,7 +65,11 @@ export default class Game {
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });
+
+
   }
+
+
 
   setupCamera() {
     // This creates and positions a free camera (non-mesh)
