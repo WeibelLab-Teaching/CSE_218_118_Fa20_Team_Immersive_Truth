@@ -5,8 +5,8 @@ import 'babylonjs-loaders';
 import Player from './player';
 import Subway from './subway';
 export default class Game {
-  constructor(selfid, villagers, mafias, player_names, target) {
-    console.log(player_names);
+  constructor(selfid, villagers, mafias, player_names, target, playerRole) {
+    console.log(`in game constructor, players: ${player_names}`);
     this.canvas = target;
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = new BABYLON.Scene(this.engine);
@@ -18,31 +18,17 @@ export default class Game {
     this.mafia_ctr = 0
     this.num_players = villagers + mafias;
     this.player_names = player_names;
+    this.selfid = selfid
 
-    // for (var i = 0; i < this.num_players; i++) {
-    //   var role = 'mafia'
-    //   if (villager_ctr < villagers && (Math.random() > 0.5 || mafia_ctr == mafias)) {
-    //     role = 'villager'
-    //     villager_ctr++;
-    //   }
-    //   else {
-    //     mafia_ctr++;
-    //   }
-    //   this.players[i] = new Player(
-    //     i,
-    //     selfid,
-    //     player_names[i] ? player_names[i] : "null",
-    //     this.subway.positions[i],
-    //     role,
-    //     this.scene
-    //   );
-    // }
+    //this.addPlayer(player_names[this.selfid], playerRole);
 
-    this.cam_pos = [this.subway.positions[selfid], 2.8, selfid > 3 ? -4.7 : 2.6]
+    this.cam_pos = [this.subway.positions[this.selfid], 2.8, this.selfid > 3 ? -4.7 : 2.6]
     this.camera = this.setupCamera();
 
     // This attaches the camera to the canvas
     this.camera.attachControl(this.canvas, true);
+    console.log('after cam setup');
+
 
     //magic vr line
     var vrHelper = this.scene.createDefaultVRExperience({
@@ -53,10 +39,8 @@ export default class Game {
     vrHelper.touch = true;
     vrHelper.displayLaserPointer = true;
     vrHelper.deviceOrientationCamera.disablePointerInputWhenUsingDeviceOrientation = false;
+    console.log('after vr setup');
 
-    // vrHelper.enableTeleportation({
-    //   floorMeshes: [enviroment.ground],
-    // });
 
     //Resize event
     window.addEventListener('resize', () => {
@@ -65,6 +49,8 @@ export default class Game {
   }
 
   render() {
+    console.log('in render');
+
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });
@@ -72,10 +58,14 @@ export default class Game {
 
   addPlayer(username, role) {
     //get id and username
-    var selfid = this.player_names.length;
+    console.log(`in addPlayer username: ${username}`);
+    if (username == null) {
+      username = 'test';
+    }
+    var id = this.player_names.length;
     this.player_names.push(username);
 
-    var new_player = new Player(selfid, selfid, username, this.subway.positions[selfid], role, this.scene);
+    var new_player = new Player(id, this.selfid, username, this.subway.positions[id], role, this.scene);
 
     this.players.push(new_player);
   }
@@ -83,6 +73,7 @@ export default class Game {
 
 
   setupCamera() {
+    console.log('in set up camera');
     // This creates and positions a free camera (non-mesh)
     var camera = new BABYLON.FlyCamera(
       'camera1',

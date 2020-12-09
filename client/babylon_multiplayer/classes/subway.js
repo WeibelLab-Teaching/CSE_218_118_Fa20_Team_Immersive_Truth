@@ -13,6 +13,7 @@ export default class Subway {
     }
 
     setupSubway() {
+        console.log('in subway constructor');
         var subwaylight = new BABYLON.PointLight(
             'light2',
             new BABYLON.Vector3(11, 4.1, -1.5),

@@ -47,8 +47,11 @@ export default class Player {
           Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
         Avatar.receiveShadows = true;
         new Billboard(Avatar, username);
-        if (selfid == id)
+        console.log(selfid)
+        console.log(id)
+        if (selfid == id) {
           new ControlPanel(Avatar, role, scene);
+        }
 
         //this.mesh = Avatar;
       }

@@ -25,7 +25,7 @@ export default {
     const roomId = store.state.roomId;
     const num_villagers = store.state.villagers;
     const num_mafia = store.state.mafias;
-    const selfid = 1;
+    const selfid = 0;
     var game = null;
 
     const roomConfig = {
@@ -52,56 +52,63 @@ export default {
     const doctorNum = store.state.doctors;
     const sheriffNum = store.state.sheriffs;
     const mafiaNum = store.state.mafias;
+    var playerRole = null;
 
     io.on('connect', () => {
       if (isHost) {
-        console.log(roomId);
-        console.log(username);
-        console.log(roomConfig);
-
-        game = new Game(
-          selfid,
-          num_villagers,
-          num_mafia,
-          [store.state.name],
-          canvas.value
-        );
-        io.emit('create room', roomConfig, roomId, username, game);
-        console.log('yo');
-
-        game.render();
-        // game.addPlayer(username, 'mafia');
+        console.log('in connect');
+        io.emit('create room', roomConfig, roomId, username);
       } else {
+        io.emit('join room', roomId, username);
+      }
+    });
+
+    io.on('joined room', (role) => {
+      //handle
+      console.log('in joined room');
+      playerRole = role;
+      if (isHost) {
         game = new Game(
           selfid,
           num_villagers,
           num_mafia,
-          [store.state.name],
-          canvas.value
+          [],
+          canvas.value,
+          playerRole
         );
-        io.emit('join room', roomId, username, game);
+        game.addPlayer(username, role);
         game.render();
       }
     });
 
-    io.on('joined room', (role, game) => {
-      //handle
-      console.log('here');
-      game.addPlayer(username, role);
-    });
-
     //for new players joining
     io.on('existing players', (existingPlayers) => {
+      console.log('in existing players');
+      var playerNames = [];
       existingPlayers.forEach((player) => {
-        game.addPlayer(player.username, player.role);
+        playerNames.push(player.name);
       });
+      playerNames.push(username);
+      game = new Game(
+        existingPlayers.length,
+        num_villagers,
+        num_mafia,
+        playerNames,
+        canvas.value,
+        playerRole
+      );
+      game.addPlayer(username, playerRole);
+      game.render();
+      for (var i = 0; i < existingPlayers.length; i++) {
+        game.addPlayer(existingPlayers[i].name, existingPlayers[i].role);
+      }
     });
 
     // When a new player joins
     io.on('new player joined', (playerSocketId, username, role) => {
       //add a new player to game
       if (isHost) {
-        game.addPlayer(username);
+        game.addPlayer(username, role);
         //io.emit('game update', game);
       }
     });
@@ -200,6 +207,11 @@ export default {
         userAudio.remove();
       });
     }
+
+    window.onunload = () => {
+      io.close();
+      peerSocket.close();
+    };
 
     return {
       canvas,
