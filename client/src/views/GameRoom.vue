@@ -1,7 +1,6 @@
 <template>
   <div ref="wrapper" class="game-room">
     <canvas ref="canvas" class="canvas"></canvas>
-    <audio ref="audio" autoplay muted></audio>
   </div>
 </template>
 
@@ -10,9 +9,10 @@ import { onMounted, ref } from 'vue';
 
 import { useStore } from '../store';
 import Game from '../../babylon_multiplayer/classes/game.js';
-import { serverURL } from '../config';
+import { serverURL, peerJsSignalingServerURL } from '../config';
 
 const Manager = (window as any).io.Manager;
+const Peer = (window as any).Peer;
 
 export default {
   name: 'GameRoom',
@@ -39,16 +39,92 @@ export default {
 
     // use socket.io as follows
     const io = new Manager(serverURL).socket('/');
+    const villagerNum = store.state.villagers;
+    const doctorNum = store.state.doctors;
+    const sheriffNum = store.state.sheriffs;
+    const mafiaNum = store.state.mafias;
 
     io.on('connect', () => {
       // do stuff when connected to the socket server
-      io.emit('create room');
+
+      console.log(`connected to game socket server: ${roomId}, ${username}`);
+
+      if (isHost) {
+        io.emit(
+          'create room',
+          { villagerNum, doctorNum, sheriffNum, mafiaNum },
+          roomId,
+          username
+        );
+      } else {
+        io.emit('join room', roomId, username);
+      }
     });
 
-    io.on('new player joined', (playerSocketId, username) => {});
+    // peerjs logic
+    const peer = new Peer();
+    const peerSocket = new Manager(peerJsSignalingServerURL).socket('/');
+
+    const wrapper = ref<HTMLDivElement>((null as unknown) as HTMLDivElement);
+
+    peer.on('open', (id: string) => {
+      console.log(`peerjs id: ${id}`);
+      peerSocket.emit('join-room', roomId, id);
+    });
+
+    peerSocket.on('connect', () => {
+      console.log(`peerjs signaling server connected`);
+    });
+
+    const myAudio = document.createElement('audio');
+    myAudio.muted = true;
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      addAudioStream(myAudio, stream);
+
+      peer.on('call', (call: any) => {
+        call.answer(stream);
+
+        const userAudio = document.createElement('audio');
+
+        call.on('stream', (userAudioStream: MediaStream) => {
+          addAudioStream(userAudio, userAudioStream);
+        });
+
+        call.on('close', () => {
+          userAudio.remove();
+        });
+      });
+
+      peerSocket.on('user-connected', (userId: string) => {
+        connectToNewUser(userId, stream);
+      });
+    });
+
+    function addAudioStream(audio: HTMLAudioElement, stream: MediaStream) {
+      audio.srcObject = stream;
+      audio.addEventListener('loadedmetadata', () => {
+        audio.play();
+      });
+      wrapper.value.append(audio);
+    }
+
+    function connectToNewUser(userId: string, stream: MediaStream) {
+      const call = peer.call(userId, stream);
+      const userAudio = document.createElement('audio');
+
+      call.on('stream', (userAudioStream: MediaStream) => {
+        addAudioStream(userAudio, userAudioStream);
+      });
+
+      call.on('close', () => {
+        userAudio.remove();
+      });
+    }
 
     return {
       canvas,
+      wrapper,
     };
   },
 };
