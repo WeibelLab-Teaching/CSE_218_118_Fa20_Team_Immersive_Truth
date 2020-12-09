@@ -17,6 +17,7 @@ export default class Game {
     this.villager_ctr = 0
     this.mafia_ctr = 0
     this.num_players = villagers + mafias;
+    this.player_names = player_names;
 
     // for (var i = 0; i < this.num_players; i++) {
     //   var role = 'mafia'
@@ -69,22 +70,12 @@ export default class Game {
     });
   }
 
-  addPlayer(username) {
+  addPlayer(username, role) {
     //get id and username
-    var selfid = player_names.length;
+    var selfid = this.player_names.length;
     this.player_names.push(username);
 
-    //assign roles
-    var role = 'mafia'
-    if (this.villager_ctr < this.villagers && (Math.random() > 0.5 || this.mafia_ctr == this.mafias)) {
-      role = 'villager'
-      this.villager_ctr++;
-    }
-    else {
-      this.mafia_ctr++;
-    }
-
-    new_player = new Player(selfid, selfid, username, this.subway.positions[selfid], role, this.scene);
+    var new_player = new Player(selfid, selfid, username, this.subway.positions[selfid], role, this.scene);
 
     this.players.push(new_player);
   }

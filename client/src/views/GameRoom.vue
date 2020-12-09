@@ -55,7 +55,10 @@ export default {
 
     io.on('connect', () => {
       if (isHost) {
-        io.emit('create room', roomConfig, roomId, username);
+        console.log(roomId);
+        console.log(username);
+        console.log(roomConfig);
+
         game = new Game(
           selfid,
           num_villagers,
@@ -63,51 +66,75 @@ export default {
           [store.state.name],
           canvas.value
         );
+        io.emit('create room', roomConfig, roomId, username, game);
         console.log('yo');
+
         game.render();
+        // game.addPlayer(username, 'mafia');
       } else {
-        io.emit('new player joined', 0, username); //figure this out
+        game = new Game(
+          selfid,
+          num_villagers,
+          num_mafia,
+          [store.state.name],
+          canvas.value
+        );
+        io.emit('join room', roomId, username, game);
+        game.render();
       }
     });
 
+    io.on('joined room', (role, game) => {
+      //handle
+      console.log('here');
+      game.addPlayer(username, role);
+    });
+
+    //for new players joining
+    io.on('existing players', (existingPlayers) => {
+      existingPlayers.forEach((player) => {
+        game.addPlayer(player.username, player.role);
+      });
+    });
+
     // When a new player joins
-    io.on('new player joined', (playerSocketId, username) => {
+    io.on('new player joined', (playerSocketId, username, role) => {
       //add a new player to game
       if (isHost) {
         game.addPlayer(username);
-        io.emit('game update', game);
+        //io.emit('game update', game);
       }
     });
 
     //on game update
-    io.on('game update', (new_game) => {
-      game = new_game;
-    });
+    // io.on('game update', (new_game) => {
+    //   game = new_game;
+    // });
 
-    io.on('day', () => {
-      //day phase do something
-    });
+    // io.on('day', () => {
+    //   //day phase do something
+    // });
 
-    io.on('start', () => {
-      //do something on start
-    });
+    // io.on('start', () => {
+    //   //do something on start
+    // });
 
-    io.on('game ended', (winner) => {
-      //do something on end
-      // winner: 'mafia' || 'villager'
-    });
+    // io.on('game ended', (winner) => {
+    //   //do something on end
+    //   // winner: 'mafia' || 'villager'
+    // });
 
-    io.on('voted player', (votedPlayer) => {
-      //gives us the voted player
-    });
+    // io.on('voted player', (votedPlayer) => {
+    //   //gives us the voted player
+    // });
 
-    io.on('error', (error) => {
-      console.log(`Error: ${error}`);
-    });
+    // io.on('error', (error) => {
+    //   console.log(`Error: ${error}`);
+    // });
 
-    io.on('player disconnected', (socketId, username) => {
-      //handle player leaving
-    });
+    // io.on('player disconnected', (socketId, username) => {
+    //   //handle player leaving
+    // });
     // btn.addEventListener('click', () => {
     //   io.emit('vote', (votedPlayer) => {});
     // });
