@@ -12,28 +12,30 @@ export default class Game {
     this.scene = new BABYLON.Scene(this.engine);
     this.subway = new Subway(this.scene);
     this.players = []
-    let villager_ctr = 0
-    let mafia_ctr = 0
+    this.villagers = villagers
+    this.mafias = mafias
+    this.villager_ctr = 0
+    this.mafia_ctr = 0
     this.num_players = villagers + mafias;
 
-    for (var i = 0; i < this.num_players; i++) {
-      var role = 'mafia'
-      if (villager_ctr < villagers && (Math.random() > 0.5 || mafia_ctr == mafias)) {
-        role = 'villager'
-        villager_ctr++;
-      }
-      else {
-        mafia_ctr++;
-      }
-      this.players[i] = new Player(
-        i,
-        selfid,
-        player_names[i] ? player_names[i] : "null",
-        this.subway.positions[i],
-        role,
-        this.scene
-      );
-    }
+    // for (var i = 0; i < this.num_players; i++) {
+    //   var role = 'mafia'
+    //   if (villager_ctr < villagers && (Math.random() > 0.5 || mafia_ctr == mafias)) {
+    //     role = 'villager'
+    //     villager_ctr++;
+    //   }
+    //   else {
+    //     mafia_ctr++;
+    //   }
+    //   this.players[i] = new Player(
+    //     i,
+    //     selfid,
+    //     player_names[i] ? player_names[i] : "null",
+    //     this.subway.positions[i],
+    //     role,
+    //     this.scene
+    //   );
+    // }
 
     this.cam_pos = [this.subway.positions[selfid], 2.8, selfid > 3 ? -4.7 : 2.6]
     this.camera = this.setupCamera();
@@ -65,8 +67,26 @@ export default class Game {
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });
+  }
 
+  addPlayer(username) {
+    //get id and username
+    var selfid = player_names.length;
+    this.player_names.push(username);
 
+    //assign roles
+    var role = 'mafia'
+    if (this.villager_ctr < this.villagers && (Math.random() > 0.5 || this.mafia_ctr == this.mafias)) {
+      role = 'villager'
+      this.villager_ctr++;
+    }
+    else {
+      this.mafia_ctr++;
+    }
+
+    new_player = new Player(selfid, selfid, username, this.subway.positions[selfid], role, this.scene);
+
+    this.players.push(new_player);
   }
 
 
