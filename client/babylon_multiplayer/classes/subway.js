@@ -6,7 +6,7 @@ export default class Subway {
     constructor(scene) {
         this.scene = scene;
 
-        this.positions = [11.6, 10, 8.5, 11.6, 8.5, 7, 7];
+        this.positions = [[11.5, -4.7], [11.5, 2.6], [9.5, -4.7], [9.5, 2.6], [7.5, -4.7], [7.5, 2.6]];
 
         // setupGround();
         this.setupSubway();

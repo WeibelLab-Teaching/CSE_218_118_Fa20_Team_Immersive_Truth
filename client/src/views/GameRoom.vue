@@ -35,17 +35,6 @@ export default {
       sheriffNum: store.state.sheriffs,
     };
 
-    // onMounted(() => {
-    //   var game = new Game(
-    //     selfid,
-    //     num_villagers,
-    //     num_mafia,
-    //     ['charlie', store.state.name, 'gamma', 'alpha', 'delta'],
-    //     canvas.value
-    //   );
-    //   game.render();
-    // });
-
     // use socket.io as follows
     const io = new Manager(serverURL).socket('/');
     const villagerNum = store.state.villagers;
@@ -56,7 +45,6 @@ export default {
 
     io.on('connect', () => {
       if (isHost) {
-        console.log('in connect');
         io.emit('create room', roomConfig, roomId, username);
       } else {
         io.emit('join room', roomId, username);
@@ -64,53 +52,41 @@ export default {
     });
 
     io.on('joined room', (role) => {
-      //handle
-      console.log('in joined room');
       playerRole = role;
       if (isHost) {
         game = new Game(
-          selfid,
           num_villagers,
           num_mafia,
-          [],
           canvas.value,
-          playerRole
         );
-        game.addPlayer(username, role);
+        
+        game.addPlayer(username, role, true);
         game.render();
       }
     });
 
     //for new players joining
     io.on('existing players', (existingPlayers) => {
-      console.log('in existing players');
-      var playerNames = [];
-      existingPlayers.forEach((player) => {
-        playerNames.push(player.name);
-      });
-      playerNames.push(username);
+      // console.log('in existing players');
+
       game = new Game(
-        existingPlayers.length,
         num_villagers,
         num_mafia,
-        playerNames,
         canvas.value,
-        playerRole
       );
-      game.addPlayer(username, playerRole);
       game.render();
       for (var i = 0; i < existingPlayers.length; i++) {
-        game.addPlayer(existingPlayers[i].name, existingPlayers[i].role);
+        game.addPlayer(existingPlayers[i].name, existingPlayers[i].role, false);
       }
+      game.addPlayer(username, playerRole, true);
+
     });
 
     // When a new player joins
     io.on('new player joined', (playerSocketId, username, role) => {
       //add a new player to game
-      if (isHost) {
-        game.addPlayer(username, role);
+      game.addPlayer(username, role, false);
         //io.emit('game update', game);
-      }
     });
 
     //on game update

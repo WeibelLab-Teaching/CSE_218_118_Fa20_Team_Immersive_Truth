@@ -6,14 +6,13 @@ import ControlPanel from './controlPanel.js';
 import 'babylonjs-loaders';
 
 export default class Player {
-  constructor(id, selfid, username, position, role, scene) {
+  constructor(id, username, position, role, scene, isSelf) {
     this.id = id;
     this.role = role;
     this.name = username;
     this.mesh = null;
     this.votes = 0;
     this.scene = scene;
-    console.log("ROLE:" + id)
     BABYLON.SceneLoader.ImportMesh(
       '',
       'src/assets/scenes/',
@@ -21,9 +20,9 @@ export default class Player {
       scene,
       function (newMeshes, particleSystems, skeletons) {
         //Locations of players
-        var x_val = position;
+        var x_val = position[0];
         var y_val = -0.6;
-        var z_val = id > 2 ? -4.7 : 2.6;
+        var z_val = position[1]
 
         var Avatar = newMeshes[0];
         Avatar.name = 'player' + id;
@@ -43,13 +42,12 @@ export default class Player {
         Avatar.position.y = y_val;
         Avatar.position.z = z_val;
 
-        if (id < 3)
+        if (z_val < 0)
           Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
         Avatar.receiveShadows = true;
         new Billboard(Avatar, username);
-        console.log(selfid)
-        console.log(id)
-        if (selfid == id) {
+
+        if (isSelf) {
           new ControlPanel(Avatar, role, scene);
         }
 
