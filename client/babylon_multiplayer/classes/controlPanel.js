@@ -52,7 +52,6 @@ export default class ControlPanel {
             break;
         }
         hl.addMesh(selectedMesh, newColor);
-
         playerId = selectedMesh.name.replace("player","")
         io.emit("kill", playerId)
         color = (color + 1) % 5;
@@ -87,7 +86,7 @@ export default class ControlPanel {
 
       kill.onPointerUpObservable.add(OnKillClicked);
     }
-    
+
     if (this.role == 'doctor') {
       let save = new GUI.HolographicButton('Save them');
       guiPanel.addControl(save);

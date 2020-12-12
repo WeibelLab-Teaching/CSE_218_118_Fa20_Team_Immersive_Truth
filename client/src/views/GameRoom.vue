@@ -61,7 +61,7 @@ export default {
           io
         );
         
-        game.addPlayer(username, role, true);
+        game.addPlayer(0, username, role, true);
         game.render();
       }
     });
@@ -78,9 +78,9 @@ export default {
       );
       game.render();
       for (var i = 0; i < existingPlayers.length; i++) {
-        game.addPlayer(existingPlayers[i].socketId, existingPlayers[i].name, existingPlayers[i].role, false);
+        game.addPlayer(existingPlayers[i].socketId, existingPlayers[i].username, existingPlayers[i].role, false);
       }
-      game.addPlayer(username, playerRole, true);
+      game.addPlayer(0, username, playerRole, true);
 
     });
 

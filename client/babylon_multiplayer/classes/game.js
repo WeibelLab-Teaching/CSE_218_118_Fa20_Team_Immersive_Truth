@@ -16,7 +16,6 @@ export default class Game {
     this.villager_ctr = 0
     this.mafia_ctr = 0
     this.num_players = villagers + mafias;
-    this.selfid = selfid
     this.io = io
 
 

@@ -46,7 +46,7 @@ export default class Player {
         Avatar.position.y = y_val;
         Avatar.position.z = z_val;
 
-        if (z_val < 0)
+        if (z_val > 0)
           Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
         Avatar.receiveShadows = true;
         billboard = new Billboard(Avatar, username);
