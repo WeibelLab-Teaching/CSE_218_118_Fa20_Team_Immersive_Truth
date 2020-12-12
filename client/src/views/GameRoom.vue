@@ -58,6 +58,7 @@ export default {
           num_villagers,
           num_mafia,
           canvas.value,
+          io
         );
         
         game.addPlayer(username, role, true);
@@ -73,10 +74,11 @@ export default {
         num_villagers,
         num_mafia,
         canvas.value,
+        io
       );
       game.render();
       for (var i = 0; i < existingPlayers.length; i++) {
-        game.addPlayer(existingPlayers[i].name, existingPlayers[i].role, false);
+        game.addPlayer(existingPlayers[i].socketId, existingPlayers[i].name, existingPlayers[i].role, false);
       }
       game.addPlayer(username, playerRole, true);
 
@@ -85,9 +87,27 @@ export default {
     // When a new player joins
     io.on('new player joined', (playerSocketId, username, role) => {
       //add a new player to game
-      game.addPlayer(username, role, false);
+      game.addPlayer(playerSocketId, username, role, false);
         //io.emit('game update', game);
     });
+
+    //at end of night phase
+    io.on('killed players', (killedPlayers)=>{
+      game.removePlayers(killedPlayers);
+    });
+
+    //at end of day phase
+    io.on('voted player', (votedPlayer)=>{
+      game.removePlayers([votedPlayer]);
+    });
+
+    io.on('night', ()=> {
+      game.subway.turnOffLights();
+    })
+
+    io.on('day', ()=> {
+      game.subway.turnOnLights();
+    })
 
     //on game update
     // io.on('game update', (new_game) => {

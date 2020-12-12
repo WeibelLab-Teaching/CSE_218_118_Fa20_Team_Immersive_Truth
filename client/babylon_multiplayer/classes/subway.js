@@ -12,18 +12,28 @@ export default class Subway {
         this.setupSubway();
     }
 
+    turnOffLights() {
+        this.subwaylight.intensity = 0
+        this.subwaylight2.intensity = 0
+    }
+
+    turnOnLights() {
+        this.subwaylight.intensity = 0.7;
+        this.subwaylight2.intensity = 0.5;
+    }
+
     setupSubway() {
         console.log('in subway constructor');
-        var subwaylight = new BABYLON.PointLight(
-            'light2',
+        this.subwaylight = new BABYLON.PointLight(
+            'light1',
             new BABYLON.Vector3(11, 4.1, -1.5),
             // new BABYLON.Vector3(0, -1, 0),
             // 6,
             // 0.2,
             this.scene
         );
-        var subwaylight2 = new BABYLON.PointLight(
-            'light3',
+        this.subwaylight2 = new BABYLON.PointLight(
+            'light2',
             new BABYLON.Vector3(-7, 4, -1.5),
             // new BABYLON.Vector3(0, -1, 0),
             // 6,
@@ -31,10 +41,10 @@ export default class Subway {
             this.scene
         );
 
-        subwaylight.intensity = 0.7;
-        subwaylight2.intensity = 0.5;
+        this.subwaylight.intensity = 0.7;
+        this.subwaylight2.intensity = 0.5;
 
-        subwaylight.diffuse = BABYLON.Color3.White();
+        this.subwaylight.diffuse = BABYLON.Color3.White();
         // var mySphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {
         //     diameter: 1
         // }, this.scene);

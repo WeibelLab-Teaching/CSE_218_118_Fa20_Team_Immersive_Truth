@@ -3,7 +3,6 @@
 /* global World */
 import Subway from './subway.js';
 import BABYLON from 'babylonjs';
-import Avatar from './avatar.js';
 import GUI from 'babylonjs-gui';
 import 'babylonjs-loaders';
 

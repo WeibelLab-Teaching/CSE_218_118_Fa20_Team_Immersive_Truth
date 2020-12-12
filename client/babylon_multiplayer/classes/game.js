@@ -5,7 +5,7 @@ import 'babylonjs-loaders';
 import Player from './player';
 import Subway from './subway';
 export default class Game {
-  constructor(villagers, mafias, target) {
+  constructor(villagers, mafias, target, io) {
     this.canvas = target;
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = new BABYLON.Scene(this.engine);
@@ -17,6 +17,7 @@ export default class Game {
     this.mafia_ctr = 0
     this.num_players = villagers + mafias;
     this.selfid = selfid
+    this.io = io
 
 
     //magic vr line
@@ -45,7 +46,7 @@ export default class Game {
     });
   }
 
-  addPlayer(username, role, isSelf) {
+  addPlayer(socketID, username, role, isSelf) {
 
 
     // This attaches the camera to the canvas
@@ -66,12 +67,18 @@ export default class Game {
       this.scene.activeCamera = this.camera
     }
 
-    var new_player = new Player(id, username, this.subway.positions[id], role, this.scene, isSelf);
+    var new_player = new Player(socketID, username, this.subway.positions[id], role, this.scene, isSelf, this.io);
 
     this.players.push(new_player);
   }
 
-
+  removePlayers(removedPlayers){
+    this.players.forEach(player => {
+      if(removedPlayers.includes(player.id)){
+        player.destroy()
+      }
+    });
+  }  
 
   setupCamera() {
     console.log('in set up camera');

@@ -1,15 +1,14 @@
-import Subway from './subway.js';
 import BABYLON from 'babylonjs';
-import Avatar from './avatar.js';
 import Player from './player.js';
 import GUI from 'babylonjs-gui';
 import 'babylonjs-loaders';
 
 export default class ControlPanel {
-  constructor(playerMesh, role, scene) {
+  constructor(playerMesh, role, scene, io) {
     this.scene = scene;
     this.playerMesh = playerMesh;
     this.role = role;
+    this.io = io;
     this.create();
   }
 
@@ -18,18 +17,18 @@ export default class ControlPanel {
     hl.innerGlow = true;
     hl.outerGlow = false;
     var color = 0;
+    this.enabled = true
 
     function OnVoteClicked() {
-      if (selectedMesh != null && selectedMesh.name.includes('player')) {
+      if (this.enabled && selectedMesh != null && selectedMesh.name.includes('player')) {
         console.log("Voted for " + selectedMesh.name)
         Player.addVote(selectedMesh.id);
         console.log(selectedMesh);
       }
     }
 
-
     function OnKillClicked() {
-      if (selectedMesh != null && selectedMesh.name.includes('player')) {
+      if (this.enabled && selectedMesh != null && selectedMesh.name.includes('player')) {
         console.log(selectedMesh.name + ' has been eliminated');
 
         selectedMesh.material = new BABYLON.StandardMaterial();
@@ -54,6 +53,8 @@ export default class ControlPanel {
         }
         hl.addMesh(selectedMesh, newColor);
 
+        playerId = selectedMesh.name.replace("player","")
+        io.emit("kill", playerId)
         color = (color + 1) % 5;
         selectedMesh.material.diffuseColor = newColor;
         selectedMesh.renderOutline = false;
@@ -85,8 +86,8 @@ export default class ControlPanel {
       kill.content = killText;
 
       kill.onPointerUpObservable.add(OnKillClicked);
-
     }
+    
     if (this.role == 'doctor') {
       let save = new GUI.HolographicButton('Save them');
       guiPanel.addControl(save);
