@@ -112,10 +112,10 @@ Description of events to ensure audio connections are enabled within the game.
 
 **Links to folders in the repository**
 
-1. server - All server related code is present in the server/ folder.
-2. client - All client related code is present in the client/ folder.
-3. scenes - This contains all the Blender models that we have exported from the scenes/ folder.
-4. images - Contains all the images required to draw up the README file for this project.
+1. server - All server related code is present here.
+2. client - All client related code is present here.
+3. scenes - This contains all the Blender models in different file formats.
+4. images - Contains all the images required to make the README file for this project.
 
 **Team Members and contribution**
 
