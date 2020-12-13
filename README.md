@@ -40,31 +40,49 @@ True Mafia leader and performs an extra kill after the Mafia goes to sleep
 ![](images/MafiaVR_logo.PNG)
 
 2. Interaction with the game flow looks as follows -
-
 ![](images/gameSetup.jpg)
 
-3. Conclusion of a game -
+Description of events during the setup of the game
+  1. Create Room (Host -> Server) - Set the configuration for the room by choosing the different characters to play the game.
+  2. Joined room (Server -> Host) - Inform the host their particular role.
+  3. Join room (Player -> Server) - Pass username to the player
+  4. Joined room (Server -> Player) - Inform the players about their role
+  5. Existing players (Server -> Player) - Inform the most recently joined player about the names of other players in the game.
 
+3. Conclusion of a game - Game concludes when either Mafia wins or the villagers win
 ![](images/gameConclusion.png)
+  1. Win condition for a Mafia: (Number of villagers <= Number of mafias)
+  2. Win condition for Villagers: (All mafias killed)
+  
+Description of events when the game concludes:
+  1. Game end - Informing all the players who has won the game.
 
 4. WebRTC Architecture -
-
 ![](images/webRTC.jpg)
 
+There are two servers (signaling and peer.js) in the webRTC architecture.
+  1. Signaling server establishes connections between a particular device with all the devices it needs to communicate with
+
+Description of events to ensure audio connections are enabled within the game.
+  1, 4. Ask for ID (Client -> peer.js Server) - Request to receive the unique ID for every player.
+  2, 5. Obtain the ID (peer.js Server -> Client) - Receive the ID from the peer.js server.
+  3, 6. Send room ID, name and ID to the signaling server (Client -> Signaling server)
+  4, 8. Send other peers' IDs. 
 
 **Instructions to start playing the game**
 
 1. Open https://yongzeyao.github.io/ and you will be connected to the game. The following screen should be visible.
-![](images/MafiaVR_logo.PNG)
-2. Select from the options to either a host a game or join a game. To join a game, one should already have the game room number. To host a game select the host game button which would lead you to selecting the configuration for the game
-![](images/playerOptions.PNG)
+  ![](images/MafiaVR_logo.PNG)
+2. Select from the options to either a host a game or join a game. 
+  2.1 To join a game, one should already have the game room number. 
+  2.2 To host a game select the host game button which would lead you to selecting the configuration for the game
+  ![](images/playerOptions.PNG)
 3. Select the configuration and proceed towards obtaining the room code
-![](images/roomCodeCapture.PNG)
+  ![](images/roomCodeCapture.PNG)
 4. Click on **NEXT** to move towards the screen where you enter your name
-![](images/EnterGame.PNG)
+  ![](images/EnterGame.PNG)
 5. Provide the name and the game room would be visible
-![](images/GameRoom.PNG)
-
+  ![](images/GameRoom.PNG)
 
 **Links to folders in the repository**
 
@@ -75,15 +93,15 @@ True Mafia leader and performs an extra kill after the Mafia goes to sleep
 
 **Team Members and contribution**
 
-1. @YongzeYao (M.S CSE, UCSD) - Backend, frontend developer
-2. @gmbeal (B.S ECE UCSD) - Babylon.js developer and UI designer
-3. @Yaffoman (B.S ECE UCSD) - Babylon.js developer, UI designer
-4. @Dayyan (B.S CSE UCSD) - Blender model developer
-5. @Krishna14 (M.S ECE, UCSD) - Project/Product Manager
+1. YongzeYao (M.S CSE, UCSD) - Backend, frontend developer
+2. Gabriel Beal (B.S ECE UCSD) - Babylon.js developer and UI designer
+3. Ethan Lerner (B.S ECE UCSD) - Babylon.js developer, UI designer
+4. Dayyan Sisson (B.S CSE UCSD) - Blender model developer
+5. Sreekrishna Ramaswamy (M.S ECE, UCSD) - Project/Product Manager
 
 **Please send us an e-mail on any of the following links to know more about the project details**
-yoyao@ucsd.edu
-elerner@ucsd.edu
-gmbeal@ucsd.edu
-dsisson@ucsd.edu
-sramaswa@eng.ucsd.edu
+1. yoyao@ucsd.edu
+2. elerner@ucsd.edu
+3. gmbeal@ucsd.edu
+4. dsisson@ucsd.edu
+5. sramaswa@eng.ucsd.edu
