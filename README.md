@@ -37,7 +37,7 @@ True Mafia leader and performs an extra kill after the Mafia goes to sleep
 
 1. Interaction with the UI for the web-application looks as follows -
 
-![](images/MafiaVR_logo.png)
+![](images/MafiaVR_logo.PNG)
 
 2. Interaction with the game flow looks as follows -
 
@@ -45,8 +45,45 @@ True Mafia leader and performs an extra kill after the Mafia goes to sleep
 
 3. Conclusion of a game -
 
-![](images/gameConclusion.jpg)
+![](images/gameConclusion.png)
 
 4. WebRTC Architecture -
 
 ![](images/webRTC.jpg)
+
+
+**Instructions to start playing the game**
+
+1. Open https://yongzeyao.github.io/ and you will be connected to the game. The following screen should be visible.
+![](images/MafiaVR_logo.PNG)
+2. Select from the options to either a host a game or join a game. To join a game, one should already have the game room number. To host a game select the host game button which would lead you to selecting the configuration for the game
+![](images/playerOptions.PNG)
+3. Select the configuration and proceed towards obtaining the room code
+![](images/roomCodeCapture.PNG)
+4. Click on **NEXT** to move towards the screen where you enter your name
+![](images/EnterGame.PNG)
+5. Provide the name and the game room would be visible
+![](images/GameRoom.PNG)
+
+
+**Links to folders in the repository**
+
+1. server - All server related code is present in the server/ folder.
+2. client - All client related code is present in the client/ folder.
+3. scenes - This contains all the Blender models that we have exported from the scenes/ folder.
+4. images - Contains all the images required to draw up the README file for this project.
+
+**Team Members and contribution**
+
+1. @YongzeYao (M.S CSE, UCSD) - Backend, frontend developer
+2. @gmbeal (B.S ECE UCSD) - Babylon.js developer and UI designer
+3. @Yaffoman (B.S ECE UCSD) - Babylon.js developer, UI designer
+4. @Dayyan (B.S CSE UCSD) - Blender model developer
+5. @Krishna14 (M.S ECE, UCSD) - Project/Product Manager
+
+**Please send us an e-mail on any of the following links to know more about the project details**
+yoyao@ucsd.edu
+elerner@ucsd.edu
+gmbeal@ucsd.edu
+dsisson@ucsd.edu
+sramaswa@eng.ucsd.edu
