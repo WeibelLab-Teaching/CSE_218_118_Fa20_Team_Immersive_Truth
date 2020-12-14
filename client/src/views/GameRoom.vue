@@ -40,8 +40,6 @@ export default {
     // use socket.io as follows
     const io = new Manager(serverURL).socket('/');
     const villagerNum = store.state.villagers;
-    const doctorNum = store.state.doctors;
-    const sheriffNum = store.state.sheriffs;
     const mafiaNum = store.state.mafias;
 
     io.on('connect', () => {
@@ -50,12 +48,7 @@ export default {
       console.log(`connected to game socket server: ${roomId}, ${username}`);
 
       if (isHost) {
-        io.emit(
-          'create room',
-          { villagerNum, doctorNum, sheriffNum, mafiaNum },
-          roomId,
-          username
-        );
+        io.emit('create room', { villagerNum, mafiaNum }, roomId, username);
       } else {
         io.emit('join room', roomId, username);
       }

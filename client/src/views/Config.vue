@@ -2,10 +2,6 @@
   <div class="config-component">
     <Logo />
     <div class="options">
-      <div class="narration">
-        Automatic Narration:
-        <input type="checkbox" v-model="automaticNarration" />
-      </div>
       <div class="villagers">
         Villagers:
         <select v-model.number="villagers">
@@ -18,22 +14,6 @@
         Mafias:
         <select v-model.number="mafias">
           <option value="" disabled>Please select number of mafia</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-        </select>
-      </div>
-      <div class="sheriff">
-        Sheriffs:
-        <select v-model="sheriffs">
-          <option value="" disabled>Please select number of sheriff</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-        </select>
-      </div>
-      <div class="doctor">
-        Doctors:
-        <select v-model="doctors">
-          <option value="" disabled>Please select number of doctor</option>
           <option value="1">1</option>
           <option value="2">2</option>
         </select>
@@ -57,17 +37,8 @@ export default defineComponent({
     const router = useRouter();
     const store = useStore();
 
-    const automaticNarration = computed({
-      set(e) {
-        store.commit('setAutomaticNarration', e);
-      },
-      get() {
-        return store.state.automaticNarration;
-      },
-    });
-
     const villagers = computed({
-      set(e) {
+      set(e: any) {
         store.commit('setVillagers', +e);
       },
       get() {
@@ -76,29 +47,11 @@ export default defineComponent({
     });
 
     const mafias = computed({
-      set(e) {
+      set(e: any) {
         store.commit('setMafias', +e);
       },
       get() {
         return store.state.mafias;
-      },
-    });
-
-    const sheriffs = computed({
-      set(e) {
-        store.commit('setSheriffs', +e);
-      },
-      get() {
-        return store.state.sheriffs;
-      },
-    });
-
-    const doctors = computed({
-      set(e) {
-        store.commit('setDoctors', +e);
-      },
-      get() {
-        return store.state.doctors;
       },
     });
 
@@ -109,11 +62,8 @@ export default defineComponent({
 
     return {
       router,
-      automaticNarration,
       villagers,
       mafias,
-      sheriffs,
-      doctors,
       next,
     };
   },
