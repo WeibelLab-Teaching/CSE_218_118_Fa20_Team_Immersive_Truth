@@ -5,8 +5,7 @@ import 'babylonjs-loaders';
 import Player from './player';
 import Subway from './subway';
 export default class Game {
-  constructor(selfid, villagers, mafias, player_names, target, playerRole) {
-    console.log(`in game constructor, players: ${player_names}`);
+  constructor(villagers, mafias, target, io) {
     this.canvas = target;
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = new BABYLON.Scene(this.engine);
@@ -17,17 +16,7 @@ export default class Game {
     this.villager_ctr = 0
     this.mafia_ctr = 0
     this.num_players = villagers + mafias;
-    this.player_names = player_names;
-    this.selfid = selfid
-
-    //this.addPlayer(player_names[this.selfid], playerRole);
-
-    this.cam_pos = [this.subway.positions[this.selfid], 2.8, this.selfid > 3 ? -4.7 : 2.6]
-    this.camera = this.setupCamera();
-
-    // This attaches the camera to the canvas
-    this.camera.attachControl(this.canvas, true);
-    console.log('after cam setup');
+    this.io = io
 
 
     //magic vr line
@@ -56,21 +45,39 @@ export default class Game {
     });
   }
 
-  addPlayer(username, role) {
+  addPlayer(socketID, username, role, isSelf) {
+
+
+    // This attaches the camera to the canvas
+    console.log('after cam setup');
+
     //get id and username
     console.log(`in addPlayer username: ${username}`);
     if (username == null) {
       username = 'test';
     }
-    var id = this.player_names.length;
-    this.player_names.push(username);
+    
+    var id = this.players.length;
 
-    var new_player = new Player(id, this.selfid, username, this.subway.positions[id], role, this.scene);
+    if(isSelf){
+      this.cam_pos = [this.subway.positions[id][0], 2.8, this.subway.positions[id][1]]
+      this.camera = this.setupCamera();
+      this.camera.attachControl(this.canvas, true);
+      this.scene.activeCamera = this.camera
+    }
+
+    var new_player = new Player(socketID, username, this.subway.positions[id], role, this.scene, isSelf, this.io);
 
     this.players.push(new_player);
   }
 
-
+  removePlayers(removedPlayers){
+    this.players.forEach(player => {
+      if(removedPlayers.includes(player.id)){
+        player.destroy()
+      }
+    });
+  }  
 
   setupCamera() {
     console.log('in set up camera');

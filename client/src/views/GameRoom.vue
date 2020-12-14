@@ -35,17 +35,6 @@ export default {
       sheriffNum: store.state.sheriffs,
     };
 
-    // onMounted(() => {
-    //   var game = new Game(
-    //     selfid,
-    //     num_villagers,
-    //     num_mafia,
-    //     ['charlie', store.state.name, 'gamma', 'alpha', 'delta'],
-    //     canvas.value
-    //   );
-    //   game.render();
-    // });
-
     // use socket.io as follows
     const io = new Manager(serverURL).socket('/');
     const villagerNum = store.state.villagers;
@@ -56,7 +45,6 @@ export default {
 
     io.on('connect', () => {
       if (isHost) {
-        console.log('in connect');
         io.emit('create room', roomConfig, roomId, username);
       } else {
         io.emit('join room', roomId, username);
@@ -64,54 +52,62 @@ export default {
     });
 
     io.on('joined room', (role) => {
-      //handle
-      console.log('in joined room');
       playerRole = role;
       if (isHost) {
         game = new Game(
-          selfid,
           num_villagers,
           num_mafia,
-          [],
           canvas.value,
-          playerRole
+          io
         );
-        game.addPlayer(username, role);
+        
+        game.addPlayer(0, username, role, true);
         game.render();
       }
     });
 
     //for new players joining
     io.on('existing players', (existingPlayers) => {
-      console.log('in existing players');
-      var playerNames = [];
-      existingPlayers.forEach((player) => {
-        playerNames.push(player.name);
-      });
-      playerNames.push(username);
+      // console.log('in existing players');
+
       game = new Game(
-        existingPlayers.length,
         num_villagers,
         num_mafia,
-        playerNames,
         canvas.value,
-        playerRole
+        io
       );
-      game.addPlayer(username, playerRole);
       game.render();
       for (var i = 0; i < existingPlayers.length; i++) {
-        game.addPlayer(existingPlayers[i].name, existingPlayers[i].role);
+        game.addPlayer(existingPlayers[i].socketId, existingPlayers[i].username, existingPlayers[i].role, false);
       }
+      game.addPlayer(0, username, playerRole, true);
+
     });
 
     // When a new player joins
     io.on('new player joined', (playerSocketId, username, role) => {
       //add a new player to game
-      if (isHost) {
-        game.addPlayer(username, role);
+      game.addPlayer(playerSocketId, username, role, false);
         //io.emit('game update', game);
-      }
     });
+
+    //at end of night phase
+    io.on('killed players', (killedPlayers)=>{
+      game.removePlayers(killedPlayers);
+    });
+
+    //at end of day phase
+    io.on('voted player', (votedPlayer)=>{
+      game.removePlayers([votedPlayer]);
+    });
+
+    io.on('night', ()=> {
+      game.subway.turnOffLights();
+    })
+
+    io.on('day', ()=> {
+      game.subway.turnOnLights();
+    })
 
     //on game update
     // io.on('game update', (new_game) => {

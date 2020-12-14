@@ -6,14 +6,17 @@ import ControlPanel from './controlPanel.js';
 import 'babylonjs-loaders';
 
 export default class Player {
-  constructor(id, selfid, username, position, role, scene) {
+  constructor(id, username, position, role, scene, isSelf, io) {
     this.id = id;
     this.role = role;
+    this.io = io;
     this.name = username;
     this.mesh = null;
     this.votes = 0;
     this.scene = scene;
-    console.log("ROLE:" + id)
+    var mesh = null;
+    var billboard = null;
+    var controlPanel = null;
     BABYLON.SceneLoader.ImportMesh(
       '',
       'src/assets/scenes/',
@@ -21,9 +24,9 @@ export default class Player {
       scene,
       function (newMeshes, particleSystems, skeletons) {
         //Locations of players
-        var x_val = position;
+        var x_val = position[0];
         var y_val = -0.6;
-        var z_val = id > 2 ? -4.7 : 2.6;
+        var z_val = position[1];
 
         var Avatar = newMeshes[0];
         Avatar.name = 'player' + id;
@@ -43,93 +46,28 @@ export default class Player {
         Avatar.position.y = y_val;
         Avatar.position.z = z_val;
 
-        if (id < 3)
+        if (z_val > 0)
           Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
         Avatar.receiveShadows = true;
-        new Billboard(Avatar, username);
-        console.log(selfid)
-        console.log(id)
-        if (selfid == id) {
-          new ControlPanel(Avatar, role, scene);
+        billboard = new Billboard(Avatar, username);
+
+        if (isSelf) {
+          controlPanel = new ControlPanel(Avatar, role, scene, io);
         }
 
-        //this.mesh = Avatar;
+        mesh = Avatar;
       }
     );
-    Player.all.push(this);
+    this.mesh = mesh
+    this.billboard = billboard
+    this.controlPanel = controlPanel
   }
 
   //Destroy player meshes
   destroy() {
     this.billboard.mesh.dispose();
     this.mesh.dispose();
+    this.controlPanel.enabled = false
   }
 
-  //Find existing player or create if not exists
-  static find(playerID, username) {
-    //Check if player is in our list
-    for (var objPlayer of Player.all) {
-      if (objPlayer.id === playerID) {
-        //Found player, so lets return it
-        return objPlayer;
-      }
-    }
-    //Player doesn't exist, so lets create a new one
-    return new Player(playerID, username);
-  }
-
-  static init() {
-    Player.material = new BABYLON.StandardMaterial('matPlayer', scene);
-    Player.material.diffuseColor = new BABYLON.Color3.Red();
-  }
-
-  //Find player and move them
-  static move(data) {
-    var playerID = parseInt(data.id);
-    var objPlayer = Player.find(playerID, data.username);
-    objPlayer.transform(data.x, data.y, data.z, data.rotation);
-  }
-
-  //Remove player from world
-  static remove(playerID) {
-    for (var objPlayer of Player.all) {
-      if (objPlayer.id === playerID) {
-        objPlayer.destroy();
-        break;
-      }
-    }
-
-    //Remove me from list of all players
-    Player.all = Player.all.filter((obj) => {
-      return obj.id !== playerID;
-    });
-  }
-
-  //Change position and rotation
-  transform(x, y, z, rotation) {
-    this.mesh.position.x = x;
-    this.mesh.position.y = y;
-    this.mesh.position.z = z;
-    this.mesh.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(
-      0,
-      -rotation,
-      0
-    );
-  }
-
-  static addVote(playerID) {
-    for (var objPlayer of Player.all) {
-      if (objPlayer.id === playerID) {
-        this.votes += 1;
-        break;
-      }
-    }
-
-    //Remove me from list of all players
-    Player.all = Player.all.filter((obj) => {
-      return obj.id !== playerID;
-    });
-  }
 }
-
-Player.all = new Array();
