@@ -17,9 +17,10 @@ export default class ControlPanel {
     io.on('day', () => {
       console.log("in day in control panel")
       if (this.guiPanel != null) {
-        console.log(this.vote)
-        console.log(this.guiPanel.containsControl(this.vote))
-        if (this.vote == null) {
+        // console.log(this.vote)
+        // console.log(this.guiPanel.containsControl(this.vote))
+        console.log(this.enabled);
+        if (this.vote == null && this.enabled == true) {
           let vote = new GUI.HolographicButton('Vote Out');
           this.guiPanel.addControl(vote);
 
@@ -44,7 +45,8 @@ export default class ControlPanel {
           this.vote.dispose()
           this.vote = null
         }
-        if (this.role == 'mafia' && this.kill == null) {
+        console.log(this.enabled);
+        if (this.role == 'mafia' && this.kill == null && this.enabled == true) {
           let kill = new GUI.HolographicButton('Kill them');
           this.guiPanel.addControl(kill);
 
