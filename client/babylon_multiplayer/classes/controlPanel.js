@@ -46,7 +46,7 @@ export default class ControlPanel {
         }
         if (this.role == 'mafia' && this.kill == null) {
           let kill = new GUI.HolographicButton('Kill them');
-          // guiPanel.addControl(kill);
+          this.guiPanel.addControl(kill);
 
           var killText = new GUI.TextBlock();
           killText.text = 'Kill Them';
@@ -83,31 +83,9 @@ export default class ControlPanel {
     if (enabled && selectedMesh != null && selectedMesh.name.includes('player')) {
       console.log(selectedMesh.name + ' has been eliminated');
 
-      selectedMesh.material = new BABYLON.StandardMaterial();
-      selectedMesh.visibility = 0.25;
-      var newColor;
-      switch (color) {
-        case 0:
-          newColor = BABYLON.Color3.Red();
-          break;
-        case 1:
-          newColor = BABYLON.Color3.Green();
-          break;
-        case 2:
-          newColor = BABYLON.Color3.Blue();
-          break;
-        case 3:
-          newColor = BABYLON.Color3.Yellow();
-          break;
-        case 4:
-          newColor = BABYLON.Color3.Purple();
-          break;
-      }
-      hl.addMesh(selectedMesh, newColor);
+
       var killedPlayer = selectedMesh.name.replace("player", "")
-      io.emit("kill", killedPlayer)
-      color = (color + 1) % 5;
-      selectedMesh.material.diffuseColor = newColor;
+      this.io.emit("kill", killedPlayer)
       selectedMesh.renderOutline = false;
       selectedMesh = null;
     }
