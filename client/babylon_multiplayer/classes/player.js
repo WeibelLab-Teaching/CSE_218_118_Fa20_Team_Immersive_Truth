@@ -61,7 +61,8 @@ export default class Player {
   destroy() {
     this.billboard.mesh.dispose();
     this.mesh.dispose();
-    //this.controlPanel.enabled = false
+    this.controlPanel.enabled = false
+    // this.controlPanel.guiPanel.dispose();
   }
 
 }
