@@ -1,5 +1,6 @@
 <template>
   <div ref="wrapper" class="game-room">
+    <!-- <div id="loadingScreen">Default Text</div> -->
     <canvas ref="canvas" class="canvas"></canvas>
   </div>
 </template>
@@ -27,7 +28,6 @@ export default {
     const num_mafia = store.state.mafias;
     const selfid = 0;
     var game = null;
-
     const roomConfig = {
       villagerNum: num_villagers,
       mafiaNum: num_mafia,
@@ -42,6 +42,7 @@ export default {
     const sheriffNum = store.state.sheriffs;
     const mafiaNum = store.state.mafias;
     var playerRole = null;
+    var socketId = null;
 
     io.on('connect', () => {
       if (isHost) {
@@ -51,17 +52,17 @@ export default {
       }
     });
 
-    io.on('joined room', (role) => {
+    io.on('joined room', (role, playerSocketId) => {
+      console.log('joined w id: ' + playerSocketId);
       playerRole = role;
+      socketId = playerSocketId;
+
+      //loading screen
+
       if (isHost) {
-        game = new Game(
-          num_villagers,
-          num_mafia,
-          canvas.value,
-          io
-        );
-        
-        game.addPlayer(0, username, role, true);
+        game = new Game(num_villagers, num_mafia, canvas.value, io);
+
+        game.addPlayer(playerSocketId, username, role, true, true);
         game.render();
       }
     });
@@ -70,69 +71,70 @@ export default {
     io.on('existing players', (existingPlayers) => {
       // console.log('in existing players');
 
-      game = new Game(
-        num_villagers,
-        num_mafia,
-        canvas.value,
-        io
-      );
+      game = new Game(num_villagers, num_mafia, canvas.value, io);
       game.render();
       for (var i = 0; i < existingPlayers.length; i++) {
-        game.addPlayer(existingPlayers[i].socketId, existingPlayers[i].username, existingPlayers[i].role, false);
+        game.addPlayer(
+          existingPlayers[i].socketId,
+          existingPlayers[i].username,
+          existingPlayers[i].role,
+          false,
+          false
+        );
       }
-      game.addPlayer(0, username, playerRole, true);
-
+      game.addPlayer(socketId, username, playerRole, true, false);
     });
 
     // When a new player joins
     io.on('new player joined', (playerSocketId, username, role) => {
       //add a new player to game
-      game.addPlayer(playerSocketId, username, role, false);
-        //io.emit('game update', game);
+      console.log('Adding: ' + role + ' ' + username);
+      game.addPlayer(playerSocketId, username, role, false, false);
+      //io.emit('game update', game);
     });
 
     //at end of night phase
-    io.on('killed players', (killedPlayers)=>{
+    io.on('killed players', (killedPlayers) => {
+      console.log(killedPlayers + ' were killed');
       game.removePlayers(killedPlayers);
     });
 
     //at end of day phase
-    io.on('voted player', (votedPlayer)=>{
+    io.on('voted player', (votedPlayer) => {
+      console.log(votedPlayer + ' was voted out');
       game.removePlayers([votedPlayer]);
     });
 
-    io.on('night', ()=> {
+    // start of night phase
+    io.on('night', () => {
+      console.log('night time');
+      store.commit('setDay', false);
+      store.commit('setNight', true);
       game.subway.turnOffLights();
-    })
+    });
 
-    io.on('day', ()=> {
+    // start of day phase
+    io.on('day', () => {
+      console.log('day time');
+      store.commit('setDay', true);
+      store.commit('setNight', false);
+      console.log(store.state.isDay);
       game.subway.turnOnLights();
-    })
+    });
 
-    //on game update
-    // io.on('game update', (new_game) => {
-    //   game = new_game;
-    // });
+    // start of game
+    io.on('start', () => {
+      console.log('the game is starting');
+    });
 
-    // io.on('day', () => {
-    //   //day phase do something
-    // });
-
-    // io.on('start', () => {
-    //   //do something on start
-    // });
+    //error handling
+    io.on('error', (error) => {
+      console.log(`Error: ${error}`);
+    });
 
     // io.on('game ended', (winner) => {
     //   //do something on end
     //   // winner: 'mafia' || 'villager'
-    // });
-
-    // io.on('voted player', (votedPlayer) => {
-    //   //gives us the voted player
-    // });
-
-    // io.on('error', (error) => {
-    //   console.log(`Error: ${error}`);
     // });
 
     // io.on('player disconnected', (socketId, username) => {
@@ -219,7 +221,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../scss/mixins.scss';
-
+@import '../scss/variables.scss';
 .canvas {
   touch-action: none;
   overflow: hidden;
@@ -229,5 +231,16 @@ export default {
   min-height: -webkit-fill-available;
   height: -webkit-fill-available;
   width: 100vw;
+}
+
+#loadingScreen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: $red;
+  font-size: 50px;
+  text-align: center;
+  background-color: $black;
+  z-index: 9999;
 }
 </style>

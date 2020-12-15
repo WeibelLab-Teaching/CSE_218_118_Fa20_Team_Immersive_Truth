@@ -6,7 +6,7 @@ import ControlPanel from './controlPanel.js';
 import 'babylonjs-loaders';
 
 export default class Player {
-  constructor(id, username, position, role, scene, isSelf, io) {
+  constructor(id, username, position, role, scene, isSelf, io, isHost) {
     this.id = id;
     this.role = role;
     this.io = io;
@@ -14,20 +14,19 @@ export default class Player {
     this.mesh = null;
     this.votes = 0;
     this.scene = scene;
-    var mesh = null;
-    var billboard = null;
-    var controlPanel = null;
+    this.billboard = null;
+    this.controlPanel = null;
+    this.check = 55
     BABYLON.SceneLoader.ImportMesh(
       '',
       'src/assets/scenes/',
-      'player_clothed.obj',
+      'player_clothed_rigged.obj',
       scene,
       function (newMeshes, particleSystems, skeletons) {
         //Locations of players
         var x_val = position[0];
         var y_val = -0.6;
         var z_val = position[1];
-
         var Avatar = newMeshes[0];
         Avatar.name = 'player' + id;
         Avatar.scaling = new BABYLON.Vector3(0.22, 0.22, 0.22);
@@ -49,25 +48,20 @@ export default class Player {
         if (z_val > 0)
           Avatar.rotate(new BABYLON.Vector3(0, 1, 0), Math.PI);
         Avatar.receiveShadows = true;
-        billboard = new Billboard(Avatar, username);
-
+        this.billboard = new Billboard(Avatar, username);
         if (isSelf) {
-          controlPanel = new ControlPanel(Avatar, role, scene, io);
+          this.controlPanel = new ControlPanel(role, scene, io, isHost);
         }
-
-        mesh = Avatar;
-      }
+        this.mesh = Avatar;
+      }.bind(this)
     );
-    this.mesh = mesh
-    this.billboard = billboard
-    this.controlPanel = controlPanel
   }
 
   //Destroy player meshes
   destroy() {
     this.billboard.mesh.dispose();
     this.mesh.dispose();
-    this.controlPanel.enabled = false
+    //this.controlPanel.enabled = false
   }
 
 }

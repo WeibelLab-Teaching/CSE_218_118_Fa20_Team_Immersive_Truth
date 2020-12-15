@@ -10,6 +10,8 @@ export interface State {
   sheriffs: number;
   doctors: number;
   host: boolean;
+  isDay: boolean;
+  isNight: boolean;
 }
 
 export const key: InjectionKey<Store<State>> = Symbol();
@@ -25,7 +27,17 @@ export const store = createStore<State>({
       sheriffs: 1,
       doctors: 1,
       host: false,
+      isDay: false,
+      isNight: false,
     };
+  },
+  getters: {
+    isDay: state => {
+      return state.isDay
+    },
+    isNight: state => {
+      return state.isNight
+    }
   },
   mutations: {
     setRoomId(state, roomId) {
@@ -51,6 +63,12 @@ export const store = createStore<State>({
     },
     setHost(state, host: boolean) {
       state.host = host;
+    },
+    setDay(state, day:boolean){
+      state.isDay = day;
+    },
+    setNight(state, night:boolean){
+      state.isNight = night;
     },
   },
 });

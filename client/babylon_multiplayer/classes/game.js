@@ -45,7 +45,7 @@ export default class Game {
     });
   }
 
-  addPlayer(socketID, username, role, isSelf) {
+  addPlayer(socketID, username, role, isSelf, isHost) {
 
 
     // This attaches the camera to the canvas
@@ -56,28 +56,28 @@ export default class Game {
     if (username == null) {
       username = 'test';
     }
-    
+
     var id = this.players.length;
 
-    if(isSelf){
+    if (isSelf) {
       this.cam_pos = [this.subway.positions[id][0], 2.8, this.subway.positions[id][1]]
       this.camera = this.setupCamera();
       this.camera.attachControl(this.canvas, true);
       this.scene.activeCamera = this.camera
     }
 
-    var new_player = new Player(socketID, username, this.subway.positions[id], role, this.scene, isSelf, this.io);
+    var new_player = new Player(socketID, username, this.subway.positions[id], role, this.scene, isSelf, this.io, isHost);
 
     this.players.push(new_player);
   }
 
-  removePlayers(removedPlayers){
+  removePlayers(removedPlayers) {
     this.players.forEach(player => {
-      if(removedPlayers.includes(player.id)){
+      if (removedPlayers.includes(player.id)) {
         player.destroy()
       }
     });
-  }  
+  }
 
   setupCamera() {
     console.log('in set up camera');

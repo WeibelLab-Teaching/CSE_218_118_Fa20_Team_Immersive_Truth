@@ -2,14 +2,115 @@ import BABYLON from 'babylonjs';
 import Player from './player.js';
 import GUI from 'babylonjs-gui';
 import 'babylonjs-loaders';
-
+import Gameroom from '../../src/views/GameRoom.vue'
 export default class ControlPanel {
-  constructor(playerMesh, role, scene, io) {
+  constructor(role, scene, io, isHost) {
+    this.isHost = isHost;
     this.scene = scene;
-    this.playerMesh = playerMesh;
     this.role = role;
     this.io = io;
+    this.enabled = true
+    this.kill = null;
+    this.vote = null;
     this.create();
+
+    io.on('day', () => {
+      console.log("in day in control panel")
+      if (this.guiPanel != null) {
+        console.log(this.vote)
+        console.log(this.guiPanel.containsControl(this.vote))
+        if (this.vote == null) {
+          let vote = new GUI.HolographicButton('Vote Out');
+          this.guiPanel.addControl(vote);
+
+          let voteText = new GUI.TextBlock();
+          voteText.text = 'Vote Out';
+          voteText.color = 'white';
+          voteText.fontSize = 30;
+          vote.content = voteText;
+          vote.onPointerUpObservable.add(() => this.OnVoteClicked(this.enabled, this.selectedMesh));
+          this.vote = vote
+        }
+        if (this.kill != null) {
+          this.kill.dispose()
+          this.kill = null
+        }
+      }
+    });
+
+    io.on('night', () => {
+      if (this.guiPanel != null) {
+        if (this.vote != null) {
+          this.vote.dispose()
+          this.vote = null
+        }
+        if (this.role == 'mafia' && this.kill == null) {
+          let kill = new GUI.HolographicButton('Kill them');
+          // guiPanel.addControl(kill);
+
+          var killText = new GUI.TextBlock();
+          killText.text = 'Kill Them';
+          killText.color = 'white';
+          killText.fontSize = 30;
+          kill.content = killText;
+
+          kill.onPointerUpObservable.add(() => this.OnKillClicked(this.enabled, this.selectedMesh));
+
+          this.kill = kill
+        }
+
+      }
+    });
+
+  }
+
+  OnStartClicked() {
+    console.log('Game Starting')
+    this.io.emit('start');
+    this.start.dispose();
+  }
+
+  OnVoteClicked(enabled, selectedMesh) {
+    if (enabled && selectedMesh != null && selectedMesh.name.includes('player')) {
+      console.log("Voted for " + selectedMesh.name)
+      var votedPlayer = selectedMesh.name.replace("player", "")
+      console.log("socket id: " + votedPlayer)
+      this.io.emit('vote', votedPlayer);
+    }
+  }
+
+  OnKillClicked(enabled, selectedMesh) {
+    if (enabled && selectedMesh != null && selectedMesh.name.includes('player')) {
+      console.log(selectedMesh.name + ' has been eliminated');
+
+      selectedMesh.material = new BABYLON.StandardMaterial();
+      selectedMesh.visibility = 0.25;
+      var newColor;
+      switch (color) {
+        case 0:
+          newColor = BABYLON.Color3.Red();
+          break;
+        case 1:
+          newColor = BABYLON.Color3.Green();
+          break;
+        case 2:
+          newColor = BABYLON.Color3.Blue();
+          break;
+        case 3:
+          newColor = BABYLON.Color3.Yellow();
+          break;
+        case 4:
+          newColor = BABYLON.Color3.Purple();
+          break;
+      }
+      hl.addMesh(selectedMesh, newColor);
+      var killedPlayer = selectedMesh.name.replace("player", "")
+      io.emit("kill", killedPlayer)
+      color = (color + 1) % 5;
+      selectedMesh.material.diffuseColor = newColor;
+      selectedMesh.renderOutline = false;
+      selectedMesh = null;
+    }
   }
 
   create() {
@@ -17,49 +118,6 @@ export default class ControlPanel {
     hl.innerGlow = true;
     hl.outerGlow = false;
     var color = 0;
-    this.enabled = true
-
-    function OnVoteClicked() {
-      if (this.enabled && selectedMesh != null && selectedMesh.name.includes('player')) {
-        console.log("Voted for " + selectedMesh.name)
-        Player.addVote(selectedMesh.id);
-        console.log(selectedMesh);
-      }
-    }
-
-    function OnKillClicked() {
-      if (this.enabled && selectedMesh != null && selectedMesh.name.includes('player')) {
-        console.log(selectedMesh.name + ' has been eliminated');
-
-        selectedMesh.material = new BABYLON.StandardMaterial();
-        selectedMesh.visibility = 0.25;
-        var newColor;
-        switch (color) {
-          case 0:
-            newColor = BABYLON.Color3.Red();
-            break;
-          case 1:
-            newColor = BABYLON.Color3.Green();
-            break;
-          case 2:
-            newColor = BABYLON.Color3.Blue();
-            break;
-          case 3:
-            newColor = BABYLON.Color3.Yellow();
-            break;
-          case 4:
-            newColor = BABYLON.Color3.Purple();
-            break;
-        }
-        hl.addMesh(selectedMesh, newColor);
-        playerId = selectedMesh.name.replace("player","")
-        io.emit("kill", playerId)
-        color = (color + 1) % 5;
-        selectedMesh.material.diffuseColor = newColor;
-        selectedMesh.renderOutline = false;
-        selectedMesh = null;
-      }
-    };
 
     // Set UI Control panel
     var guiManager = new GUI.GUI3DManager(this.scene);
@@ -74,43 +132,52 @@ export default class ControlPanel {
 
     //// add buttons
     // follow / walking mode button
-    if (this.role == 'mafia') {
-      let kill = new GUI.HolographicButton('Kill them');
-      guiPanel.addControl(kill);
+    // if (this.role == 'mafia') {
+    //   let kill = new GUI.HolographicButton('Kill them');
+    //   // guiPanel.addControl(kill);
 
-      var killText = new GUI.TextBlock();
-      killText.text = 'Kill Them';
-      killText.color = 'white';
-      killText.fontSize = 30;
-      kill.content = killText;
+    //   var killText = new GUI.TextBlock();
+    //   killText.text = 'Kill Them';
+    //   killText.color = 'white';
+    //   killText.fontSize = 30;
+    //   kill.content = killText;
 
-      kill.onPointerUpObservable.add(OnKillClicked);
-    }
+    //   kill.onPointerUpObservable.add(() => this.OnKillClicked(this.enabled, selectedMesh));
 
-    if (this.role == 'doctor') {
-      let save = new GUI.HolographicButton('Save them');
-      guiPanel.addControl(save);
-      let saveText = new GUI.TextBlock();
-      saveText.text = 'Save Them';
-      saveText.color = 'white';
-      saveText.fontSize = 30;
-      save.content = saveText;
-    }
-
-    let vote = new GUI.HolographicButton('Vote Out');
-    guiPanel.addControl(vote);
+    //   this.kill = kill
+    // }
 
     // play
-    let voteText = new GUI.TextBlock();
-    voteText.text = 'Vote Out';
-    voteText.color = 'white';
-    voteText.fontSize = 30;
-    vote.content = voteText;
-    vote.onPointerUpObservable.add(OnVoteClicked);
+    // if (true) {
+    //   let vote = new GUI.HolographicButton('Vote Out');
+    //   // guiPanel.addControl(vote);
 
-    var selectedMesh;
+    //   let voteText = new GUI.TextBlock();
+    //   voteText.text = 'Vote Out';
+    //   voteText.color = 'white';
+    //   voteText.fontSize = 30;
+    //   vote.content = voteText;
+    //   vote.onPointerUpObservable.add(() => this.OnVoteClicked(this.enabled, selectedMesh));
 
+    //   this.vote = vote
+    // }
+
+
+    if (this.isHost) {
+      this.start = new GUI.HolographicButton('Start Game');
+      guiPanel.addControl(this.start);
+      let startText = new GUI.TextBlock();
+      startText.text = 'Start';
+      startText.color = 'white';
+      startText.fontSize = 30;
+      this.start.content = startText;
+      this.start.onPointerUpObservable.add(() => this.OnStartClicked());
+    }
+    this.selectedMesh;
+    this.guiManager = guiManager
+    this.guiPanel = guiPanel
     this.scene.onPointerObservable.add((pointerInfo) => {
+      var selectedMesh = this.selectedMesh
       switch (pointerInfo.type) {
         case BABYLON.PointerEventTypes.POINTERDOWN:
           if (
@@ -123,10 +190,12 @@ export default class ControlPanel {
             if (selectedMesh != null && selected != selectedMesh) {
               selectedMesh.renderOutline = false;
             }
-            selectedMesh = selected;
+            this.selectedMesh = selected;
           }
           break;
       }
     });
   }
+
+
 }
