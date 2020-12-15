@@ -3,7 +3,6 @@
 /* global World */
 import Subway from './subway.js';
 import BABYLON from 'babylonjs';
-import Avatar from './avatar.js';
 import GUI from 'babylonjs-gui';
 import 'babylonjs-loaders';
 
@@ -23,7 +22,7 @@ export default class Billboard {
     this.mesh.scaling = new BABYLON.Vector3(7, 7, 7);
     this.mesh.position = BABYLON.Vector3.Zero();
     this.mesh.position.y = this.playerMesh.position.y + 16;
-    this.mesh.position.x = this.playerMesh.position.x - 10;
+    this.mesh.position.x = this.playerMesh.position.x - 11;
     this.mesh.position.z = this.playerMesh.position.z;
     var advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(
       this.mesh,

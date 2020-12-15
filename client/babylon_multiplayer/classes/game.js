@@ -5,49 +5,31 @@ import 'babylonjs-loaders';
 import Player from './player';
 import Subway from './subway';
 export default class Game {
-  constructor(selfid, villagers, mafias, player_names, target) {
-    console.log(player_names);
+  constructor(villagers, mafias, target, io) {
     this.canvas = target;
     this.engine = new BABYLON.Engine(this.canvas, true);
     this.scene = new BABYLON.Scene(this.engine);
     this.subway = new Subway(this.scene);
     this.players = []
-    let villager_ctr = 0
-    let mafia_ctr = 0
+    this.villagers = villagers
+    this.mafias = mafias
+    this.villager_ctr = 0
+    this.mafia_ctr = 0
     this.num_players = villagers + mafias;
+    this.io = io
 
-    for(var i = 0; i < this.num_players; i++) {
-      var role = 'mafia'
-      if(villager_ctr < villagers && (Math.random() > 0.5 || mafia_ctr == mafias)){
-        role = 'villager'
-        villager_ctr++;
-      }
-      else{
-        mafia_ctr++;
-      }
-      this.players[i] = new Player(
-        i,
-        selfid,
-        player_names[i] ? player_names[i] : "null",
-        this.subway.positions[i],
-        role,
-        this.scene
-      );
-    }
-
-    this.cam_pos = [this.subway.positions[selfid], 2.8, selfid > 3 ? -4.7 : 2.6]
-    this.camera = this.setupCamera();
-
-    // This attaches the camera to the canvas
-    this.camera.attachControl(this.canvas, true);
 
     //magic vr line
     var vrHelper = this.scene.createDefaultVRExperience({
       createDeviceOrientationCamera: true,
+      trackPosition: true,
     });
     vrHelper.enableInteractions();
     vrHelper.touch = true;
     vrHelper.displayLaserPointer = true;
+    vrHelper.deviceOrientationCamera.disablePointerInputWhenUsingDeviceOrientation = false;
+    console.log('after vr setup');
+
 
     //Resize event
     window.addEventListener('resize', () => {
@@ -56,12 +38,49 @@ export default class Game {
   }
 
   render() {
+    console.log('in render');
+
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });
   }
 
+  addPlayer(socketID, username, role, isSelf, isHost) {
+
+
+    // This attaches the camera to the canvas
+    console.log('after cam setup');
+
+    //get id and username
+    console.log(`in addPlayer username: ${username}`);
+    if (username == null) {
+      username = 'test';
+    }
+
+    var id = this.players.length;
+
+    if (isSelf) {
+      this.cam_pos = [this.subway.positions[id][0], 2.8, this.subway.positions[id][1]]
+      this.camera = this.setupCamera();
+      this.camera.attachControl(this.canvas, true);
+      this.scene.activeCamera = this.camera
+    }
+
+    var new_player = new Player(socketID, username, this.subway.positions[id], role, this.scene, isSelf, this.io, isHost);
+
+    this.players.push(new_player);
+  }
+
+  removePlayers(removedPlayers) {
+    this.players.forEach(player => {
+      if (removedPlayers.includes(player.id)) {
+        player.destroy()
+      }
+    });
+  }
+
   setupCamera() {
+    console.log('in set up camera');
     // This creates and positions a free camera (non-mesh)
     var camera = new BABYLON.FlyCamera(
       'camera1',

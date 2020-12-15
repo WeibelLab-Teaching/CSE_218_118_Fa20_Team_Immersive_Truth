@@ -31,6 +31,7 @@ export default defineComponent({
         await axios.get(`${serverURL}/room/${code.value.value}`);
 
         store.commit('setRoomId', code.value?.value);
+        store.commit('setHost', false);
         router.push('/name');
       } catch (error) {
         alert(
