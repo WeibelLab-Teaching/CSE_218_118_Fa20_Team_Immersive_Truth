@@ -4,11 +4,8 @@ import { InjectionKey } from 'vue';
 export interface State {
   roomId: string;
   name: string;
-  automaticNarration: boolean;
   villagers: number;
   mafias: number;
-  sheriffs: number;
-  doctors: number;
   host: boolean;
   isDay: boolean;
   isNight: boolean;
@@ -21,11 +18,8 @@ export const store = createStore<State>({
     return {
       roomId: '',
       name: '',
-      automaticNarration: true,
       villagers: 3,
       mafias: 1,
-      sheriffs: 1,
-      doctors: 1,
       host: false,
       isDay: false,
       isNight: false,
@@ -46,20 +40,11 @@ export const store = createStore<State>({
     setName(state, name) {
       state.name = name;
     },
-    setAutomaticNarration(state, automaticNarration: boolean) {
-      state.automaticNarration = automaticNarration;
-    },
     setVillagers(state, villagers: number) {
       state.villagers = villagers;
     },
     setMafias(state, mafias: number) {
       state.mafias = mafias;
-    },
-    setSheriffs(state, sheriffs: number) {
-      state.sheriffs = sheriffs;
-    },
-    setDoctors(state, doctors: number) {
-      state.doctors = doctors;
     },
     setHost(state, host: boolean) {
       state.host = host;

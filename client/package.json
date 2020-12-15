@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "rm -rf dist && vite build && mkdir dist/src && cp -r src/assets dist/src && touch dist/src/temp",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

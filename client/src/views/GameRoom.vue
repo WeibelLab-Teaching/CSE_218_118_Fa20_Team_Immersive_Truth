@@ -31,15 +31,11 @@ export default {
     const roomConfig = {
       villagerNum: num_villagers,
       mafiaNum: num_mafia,
-      doctorNum: store.state.doctors,
-      sheriffNum: store.state.sheriffs,
     };
 
     // use socket.io as follows
     const io = new Manager(serverURL).socket('/');
     const villagerNum = store.state.villagers;
-    const doctorNum = store.state.doctors;
-    const sheriffNum = store.state.sheriffs;
     const mafiaNum = store.state.mafias;
     var playerRole = null;
     var socketId = null;

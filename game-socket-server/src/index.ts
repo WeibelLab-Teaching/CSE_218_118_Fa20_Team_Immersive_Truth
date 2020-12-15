@@ -1,8 +1,9 @@
 import express from 'express';
-import http from 'http';
+import { Server } from 'socket.io';
 import cors from 'cors';
+import http from 'http';
 import chalk from 'chalk';
-import { Server as SocketIO } from 'socket.io';
+import { customAlphabet } from 'nanoid';
 
 import { setupSocketIO } from './socketio';
 import { rooms } from './database';
@@ -10,18 +11,41 @@ import { rooms } from './database';
 const PORT = process.env.PORT;
 
 const app = express();
-// express cors settings
+// express cors
 app.use(cors());
 
 const server = http.createServer(app);
-// socket.io cors settings
-const io = new SocketIO(server, {
+
+const io = new Server(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     allowedHeaders: ['*'],
     credentials: true,
   },
+});
+
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const nanoid = customAlphabet(alphabet, 4);
+
+// get a new roomId
+app.get('/room', (_, res) => {
+  let valid = false;
+  let roomId = '';
+  while (!valid) {
+    roomId = nanoid();
+    if (!rooms[roomId]) {
+      valid = true;
+    }
+  }
+  rooms[roomId] = null;
+  // clean room after 30 mins if the room is still not initialized
+  setTimeout(() => {
+    if (rooms[roomId] === null) {
+      delete rooms[roomId];
+    }
+  }, 1000 * 60 * 30);
+  res.send({ roomId });
 });
 
 // check if room exists
