@@ -96,7 +96,7 @@ Description of events to ensure audio connections are enabled within the game.
   
   2.2 To host a game select the host game button which would lead you to selecting the configuration for the game
   
-  ![](images/playerOptions.PNG)
+  ![](images/playerOptionsv2.PNG)
   
 3. Select the configuration and proceed towards obtaining the room code
 
