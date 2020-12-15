@@ -18,7 +18,7 @@ To give you a gist of how this game is played, please refer to the following sto
 
 Each player that plays the game would be assigned a role that they need to stick to.
 
-**Roles in Mafia VR**
+**Roles in Mafia VR (Current Version only has Mafia and Villagers Implemented)**
 
 1. Villager - Sleep during night phase and discuss during the day phases to successfully guess the Mafia.
 2. Narrator - Conducts the entire game through all the phases, informs everyone as to who is alive/dead. Knows the role of every person playing the game. Controls the entire game
@@ -96,7 +96,7 @@ Description of events to ensure audio connections are enabled within the game.
   
   2.2 To host a game select the host game button which would lead you to selecting the configuration for the game
   
-  ![](images/playerOptions.PNG)
+  ![](images/playerOptionsv2.PNG)
   
 3. Select the configuration and proceed towards obtaining the room code
 
