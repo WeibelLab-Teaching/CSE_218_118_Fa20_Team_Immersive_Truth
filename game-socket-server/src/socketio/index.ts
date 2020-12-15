@@ -27,7 +27,6 @@ export function setupSocketIO(io: Server): void {
           roomConfig,
           players: {},
           votes: [],
-          isDay: true,
           roomId,
           killedPlayers: [],
         };
@@ -49,12 +48,9 @@ export function setupSocketIO(io: Server): void {
 
         console.log(
           chalk.blue(
-            `New room ${`(${chalk.yellow(
-              roomId
-            )})`} with the following config has been created: `
+            `New room ${`(${chalk.yellow(roomId)})`} has been created: `
           )
         );
-        console.log(rooms[roomId]);
       }
     );
 
@@ -74,6 +70,7 @@ export function setupSocketIO(io: Server): void {
           )} tries to join a non existing room: ${roomId}.`
         );
       } else {
+        console.log(`player ${socket.id} tries to join the room ${roomId}`);
         const room = rooms[roomId] as Room;
         const newPlayer = {
           username,
@@ -82,6 +79,7 @@ export function setupSocketIO(io: Server): void {
           role: pickRole(roomId),
         };
         room.players[socket.id] = newPlayer;
+        userToRoom.set(socket.id, roomId);
 
         // tell everyone a new player has joined
         socket.emit('joined room', Role[newPlayer.role], socket.id);
@@ -118,18 +116,15 @@ export function setupSocketIO(io: Server): void {
       if (rooms[roomId]) {
         // 1. remove current player from the room
         const players = (rooms[roomId] as Room).players;
-        const disconnectedPlayer = players[socket.id];
+        if (!players[socket.id]) return;
+        const disconnectedPlayerUsername = players[socket.id].username;
         delete players[socket.id];
 
         // 2. notifies all participants
         for (const player of Object.values(players)) {
           socket
             .to(player.socketId)
-            .emit(
-              'player disconnected',
-              socket.id,
-              disconnectedPlayer.username
-            );
+            .emit('player disconnected', socket.id, disconnectedPlayerUsername);
         }
       }
     });
@@ -148,20 +143,12 @@ export function setupSocketIO(io: Server): void {
 function pickRole(roomId: string): Role {
   const { roomConfig, players } = rooms[roomId] as Room;
   let mafiaNum = roomConfig.mafiaNum;
-  let sheriffNum = roomConfig.sheriffNum;
-  let doctorNum = roomConfig.doctorNum;
   let villagerNum = roomConfig.villagerNum;
 
   for (const player of Object.values(players)) {
     switch (player.role) {
-      case Role.doctor:
-        doctorNum--;
-        break;
       case Role.mafia:
         mafiaNum--;
-        break;
-      case Role.sheriff:
-        sheriffNum--;
         break;
       case Role.villager:
         villagerNum--;
@@ -169,10 +156,8 @@ function pickRole(roomId: string): Role {
     }
   }
 
-  const roleCandidates = [];
+  const roleCandidates: Role[] = [];
   for (let i = 0; i < mafiaNum; i++) roleCandidates.push(Role.mafia);
-  for (let i = 0; i < sheriffNum; i++) roleCandidates.push(Role.sheriff);
-  for (let i = 0; i < doctorNum; i++) roleCandidates.push(Role.doctor);
   for (let i = 0; i < villagerNum; i++) roleCandidates.push(Role.villager);
 
   const role = shuffle(roleCandidates)[0];

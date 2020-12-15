@@ -1,8 +1,6 @@
 export enum Role {
   mafia,
   villager,
-  doctor,
-  sheriff,
 }
 
 export interface Player {
@@ -19,7 +17,6 @@ export interface Room {
   roomConfig: RoomConfig;
   votes: string[];
   interval?: NodeJS.Timeout;
-  isDay: boolean;
   roomId: string;
   killedPlayers: string[];
 }
@@ -27,8 +24,6 @@ export interface Room {
 export interface RoomConfig {
   villagerNum: number;
   mafiaNum: number;
-  doctorNum: number;
-  sheriffNum: number;
 }
 
 export interface Rooms {

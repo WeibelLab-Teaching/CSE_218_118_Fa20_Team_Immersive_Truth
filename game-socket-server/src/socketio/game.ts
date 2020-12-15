@@ -11,7 +11,10 @@ export function handleVote(socket: Socket): void {
       return;
     }
 
+    console.log(`received a new vote request!`);
+    console.log(`player socketId: ${socket.id}`);
     const roomId = userToRoom.get(socket.id) as string;
+    console.log(`roomId: ${roomId}`);
     const room = rooms[roomId] as Room;
     room.votes.push(votedPlayer);
   });
@@ -24,8 +27,11 @@ export function handleStart(socket: Socket): void {
     // tell all players that the game has started
     for (const { socketId } of Object.values(room.players)) {
       socket.to(socketId).emit('start');
+      socket.to(socketId).emit('day');
     }
-    setTimeout(dayCallback, dayTime);
+    socket.emit('start');
+    socket.emit('day');
+    setTimeout(() => dayCallback(roomId, socket), dayTime);
   });
 }
 
@@ -51,14 +57,39 @@ function dayCallback(roomId: string, socket: Socket): void {
 
   const room = rooms[roomId] as Room;
 
+  // get the voted player
+  const votedPlayer = determineVotedPlayer(roomId);
+
+  if (!room) {
+    return;
+  }
+
+  if (votedPlayer) {
+    room.players[votedPlayer].isOut = true;
+    for (const { socketId } of Object.values(room.players)) {
+      // tell the player who is voted to be kicked out
+      socket.to(socketId).emit('voted player', votedPlayer);
+    }
+    socket.emit('voted player', votedPlayer);
+  }
+
+  // check whether the game as ended and notify players the winner
+  if (checkIfGameHasEnded(roomId)) {
+    const winner = computeGameWinner(roomId);
+    for (const { socketId } of Object.values(room.players)) {
+      socket.to(socketId).emit('game ended', winner);
+    }
+    socket.emit('game ended', winner);
+  }
+
   // switch to night phase
-  room.isDay = false;
   for (const { socketId } of Object.values(room.players)) {
     socket.to(socketId).emit('night');
   }
+  socket.emit('night');
 
   // schedule the night callback
-  setTimeout(nightCallback, nightTime);
+  setTimeout(() => nightCallback(roomId, socket), nightTime);
 }
 
 /**
@@ -72,28 +103,26 @@ function nightCallback(roomId: string, socket: Socket): void {
 
   const room = rooms[roomId] as Room;
 
-  // get the voted player
-  const votedPlayer = determineVotedPlayer(roomId);
-  room.players[votedPlayer].isOut = true;
-
   // check whether the game as ended and notify players the winner
   if (checkIfGameHasEnded(roomId)) {
     const winner = computeGameWinner(roomId);
     for (const { socketId } of Object.values(room.players)) {
       socket.to(socketId).emit('game ended', winner);
     }
+    socket.emit('game ended', winner);
   }
 
   for (const { socketId } of Object.values(room.players)) {
-    // tell the player who is voted to be kicked out
-    socket.to(socketId).emit('voted player', votedPlayer);
     // tell the player to switch to day phase
     socket.to(socketId).emit('day');
     socket.to(socketId).emit('killed players', room.killedPlayers);
   }
+  // tell the player to switch to day phase
+  socket.emit('day');
+  socket.emit('killed players', room.killedPlayers);
 
   // schedule the day callback
-  setTimeout(dayCallback, dayTime);
+  setTimeout(() => dayCallback(roomId, socket), dayTime);
 }
 
 /**
@@ -103,6 +132,13 @@ function nightCallback(roomId: string, socket: Socket): void {
 function determineVotedPlayer(roomId: string): string {
   const room = rooms[roomId] as Room;
   const votes = room.votes;
+  let playerNum = 0;
+
+  for (const player of Object.values(room.players)) {
+    if (!player.isOut) {
+      playerNum++;
+    }
+  }
 
   const voteCount: { [index: string]: number } = {};
   let max = 0;
@@ -119,12 +155,12 @@ function determineVotedPlayer(roomId: string): string {
 
   const candidates = [];
   for (const [player, count] of Object.entries(voteCount)) {
-    if (count === max) {
+    if (count === max && count >= 0.5 * playerNum) {
       candidates.push(player);
     }
   }
 
-  const result = sample(candidates) as string;
+  const result = candidates.length === 0 ? '' : (sample(candidates) as string);
 
   // clear votes for the next round
   room.votes = [];
